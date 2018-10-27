@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "577475648781",
+    "firebase_url": "https://talking-bear.firebaseio.com",
+    "project_id": "talking-bear",
+    "storage_bucket": "talking-bear.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577475648781:android:d90759b8a34f5279",
+        "android_client_info": {
+          "package_name": "th.ac.up.se.takingbear"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577475648781-49pb1eusvfnovg9nltpp05vr4hbl5tel.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdx_nKE_Q976F1T77C0ZHUDWGiMuo0g9o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

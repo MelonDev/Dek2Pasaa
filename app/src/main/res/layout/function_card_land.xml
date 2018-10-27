@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:id="@+id/function_main_layout"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+    >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/function_card_out"
+        android:transitionName="chapter_card"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="20dp"
+        app:cardBackgroundColor="@color/colorDeepPurpleDark"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="20dp"
+        android:layout_marginBottom="20dp"
+        >
+
+        <android.support.v7.widget.CardView
+            android:transitionName="chapter_card"
+            android:id="@+id/function_card_in"
+            app:cardBackgroundColor="@color/colorDeepPurple"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="15dp"
+            android:layout_margin="10dp"
+            >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="100dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/function_image"
+                        android:layout_centerInParent="true"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp" />
+
+                </RelativeLayout>
+
+
+
+
+
+
+                <RelativeLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ts_np"
+                        android:text="ชื่อ"
+                        android:minWidth="10dp"
+android:visibility="gone"
+                        android:textSize="52dp"
+                        />
+
+                    <TextView
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:minWidth="10dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:textColor="@color/colorWhite"
+                        android:text="ชื่อ"
+                        android:textSize="35dp"
+                        />
+
+                    <TextView
+                        android:gravity="center_horizontal"
+                        android:id="@+id/function_textview_a"
+                        android:layout_width="match_parent"
+                        android:minWidth="10dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ts_som_np"
+                        android:textColor="@color/colorWhite"
+                        android:text="ชื่อ"
+                        android:textSize="50dp"
+                        />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+
+
+
+
+
+
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>
