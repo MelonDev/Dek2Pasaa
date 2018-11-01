@@ -6,4 +6,12 @@
     <string name="title_activity_quiz">QuizActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_competition">CompetitionActivity</string>
+    <string name="title_activity_facebook_login">FacebookLoginActivity</string>
+
+    <string name="facebook_app_id">321309408697404</string>
+    <string name="fb_login_protocol_scheme">fb321309408697404</string>
+    <string name="title_activity_google_sign_in">GoogleSignInActivity</string>
+    <string name="title_activity_new_google_sign_in">NewGoogleSignIn</string>
+
+
 </resources>

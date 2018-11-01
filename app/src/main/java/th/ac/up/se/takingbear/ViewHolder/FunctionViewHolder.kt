@@ -1,10 +1,10 @@
 package th.ac.up.se.takingbear.ViewHolder
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.function_card_land.view.*
 
-class FunctionViewHolder(itemView:View) :RecyclerView.ViewHolder(itemView){
+class FunctionViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView){
 
     val textA = itemView.function_textview_a
     val cardIn = itemView.function_card_in

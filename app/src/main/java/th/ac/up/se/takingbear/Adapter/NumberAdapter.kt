@@ -4,10 +4,6 @@ import android.app.ActionBar
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -15,18 +11,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_list_card.*
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.Data.ChapterCheck
 import th.ac.up.se.takingbear.Data.QuizCard
+import th.ac.up.se.takingbear.Data.TestInfo
 import th.ac.up.se.takingbear.QuizActivity
 import th.ac.up.se.takingbear.R
 import th.ac.up.se.takingbear.SQLite.ChapterSQ
 import th.ac.up.se.takingbear.ViewHolder.NumberViewHolder
 import th.ac.up.se.thaicardgame.DataArray.Quiz
 
-class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<QuizCard>, var check: ArrayList<ChapterCheck>, var color: Int, var colorDark: Int, var chapter: Int) : RecyclerView.Adapter<NumberViewHolder>() {
+class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<TestInfo>, var color: Int, var colorDark: Int) : RecyclerView.Adapter<NumberViewHolder>() {
 
     lateinit var context: Context
     var weight: Int = 0
@@ -50,8 +50,9 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 
     override fun onBindViewHolder(holder: NumberViewHolder, position: Int) {
 
-//Log.e("TEST","TEST")
+        holder.open()
 
+        /*
         if (check[position].passed) {
             holder.star()
         } else if (check[position].opened) {
@@ -59,6 +60,7 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
         } else {
             holder.close()
         }
+        */
 
         /*
         if(position <= 3){
@@ -79,7 +81,14 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
         }
         */
 
+
+
+
+
+        //ชั่วคราว
+        /*
         holder.card.setOnClickListener {
+
 
             var q = Quiz().getChapter(0, chapter)
             var check = ChapterSQ(fragmentActivity, ChapterSQ.convertName(chapter), q.size)
@@ -119,6 +128,10 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
                 context.startActivity(intent)
             }
         }
+
+*/
+
+
 
 
         //holder.nameA.text = (position+1).toString()

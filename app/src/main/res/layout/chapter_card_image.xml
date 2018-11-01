@@ -8,7 +8,7 @@
 
     >
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:transitionName="chapter_card_image"
         android:id="@+id/chapter_card_image_layout"
         android:layout_width="250dp"
@@ -21,7 +21,7 @@
         android:layout_marginBottom="20dp"
         >
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/chapter_card_image_layout_second"
             app:cardBackgroundColor="#FFFFFF"
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             </RelativeLayout>
 
 
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
 
 
@@ -92,7 +92,7 @@
 
 
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>

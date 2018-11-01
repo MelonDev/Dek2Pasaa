@@ -1,6 +1,5 @@
 package th.ac.up.agr.thai_mini_chicken.Tools
 
-import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.RelativeLayout
 import at.wirecube.additiveanimations.additive_animator.AdditiveAnimator

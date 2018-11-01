@@ -1,6 +1,5 @@
 package th.ac.up.se.thaicardgame.DataArray
 
-import android.support.v4.content.ContextCompat
 import android.util.Log
 import th.ac.up.se.takingbear.Data.Chapter
 import th.ac.up.se.takingbear.Data.LessonCard
@@ -8,7 +7,7 @@ import th.ac.up.se.takingbear.Data.QuizCard
 import th.ac.up.se.takingbear.R
 
 class Quiz {
-
+/*
     fun getThaiChapter(): ArrayList<Chapter> {
         var arrayList = ArrayList<Chapter>()
 
@@ -209,5 +208,5 @@ class Quiz {
             }
         }
     }
-
+*/
 }

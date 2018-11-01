@@ -3,8 +3,8 @@ package th.ac.up.se.takingbear.SQLite
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.support.v4.app.FragmentActivity
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import th.ac.up.se.takingbear.Data.ChapterCheck
 
 class ChapterSQ(private var context: FragmentActivity, private var tableName: String, private var size: Int) : SQLiteOpenHelper(context, tableName, null, 1) {

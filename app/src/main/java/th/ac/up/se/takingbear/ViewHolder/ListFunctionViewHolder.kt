@@ -1,16 +1,16 @@
 package th.ac.up.se.takingbear.ViewHolder
 
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.main_button_card.view.*
 
 class ListFunctionViewHolder(itemView :View) : RecyclerView.ViewHolder(itemView){
 
     var name_tv :TextView = itemView.main_button_card_name_text
-    var card_layout :CardView = itemView.main_button_card_layout
+    var card_layout : CardView = itemView.main_button_card_layout
     var card_layout_dark :CardView = itemView.main_button_card_layout_dark
 
 

@@ -2,23 +2,25 @@ package th.ac.up.se.takingbear.Adapter
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.Data.LessonCard
+import th.ac.up.se.takingbear.Data.WordInfo
 import th.ac.up.se.takingbear.LessonActivity
 import th.ac.up.se.takingbear.R
 import th.ac.up.se.takingbear.ViewHolder.ChapterImageViewHolder
 
-class NewLessonAdapter(val lang :String,var chap :Int,var colorDark: Int, var color: Int, var orientation: String, var data: ArrayList<LessonCard>) : RecyclerView.Adapter<ChapterImageViewHolder>(){
+class NewLessonAdapter(val lang :String,var colorDark: Int, var color: Int, var orientation: String, var data: ArrayList<WordInfo>) : RecyclerView.Adapter<ChapterImageViewHolder>(){
 
     private lateinit var context: Context
 
@@ -44,8 +46,9 @@ class NewLessonAdapter(val lang :String,var chap :Int,var colorDark: Int, var co
     override fun onBindViewHolder(holder: ChapterImageViewHolder, position: Int) {
 
         val slot = data[position]
+
         holder.card.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
-        holder.image.setImageDrawable(ContextCompat.getDrawable(context,slot.image))
+        //holder.image.setImageDrawable(ContextCompat.getDrawable(context,slot.image))
 
         if(lang.contentEquals(LangSQ.THAI)){
             holder.nameA.text = slot.nameThai
@@ -59,14 +62,18 @@ class NewLessonAdapter(val lang :String,var chap :Int,var colorDark: Int, var co
         var hei = height - dpsToPixels(120)
         var he = height / 2
 
-        holder.second.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
-
+        if(slot.cover.isEmpty()){
+            holder.second.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
+        }else {
+            holder.second.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
+        }
 
         holder.card.layoutParams = RelativeLayout.LayoutParams(he, hei)
         holder.main.layoutParams = RelativeLayout.LayoutParams(he + dpsToPixels(16), hei)
 
-        if (data[position].image != 0) {
-            Picasso.get().load(data[position].image).into(holder.image)
+        if (data[position].cover.isNotEmpty()) {
+            //Log.e("IMAGE",data[position].cover)
+            Glide.with(context).load(data[position].cover).into(holder.image)
             //holder.overlay.setImageDrawable(ContextCompat.getDrawable(context,overlay))
             if (color == R.color.colorRedDark) {
                 if (orientation == "PORT") {
@@ -86,13 +93,14 @@ class NewLessonAdapter(val lang :String,var chap :Int,var colorDark: Int, var co
             }
         }
 
+
         holder.card.setOnClickListener {
 
             var intent = Intent(this.context,LessonActivity::class.java)
             intent.apply {
                 putExtra("COLOR",color)
-                putExtra("CHAP",chap)
-                putExtra("POS",position)
+                putExtra("MSKEY",slot.masterKey)
+                putExtra("KEY",slot.key)
                 putExtra("DARK",colorDark)
             }
             //val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this.activity, holder.card_layout, "chapter_card")
@@ -101,6 +109,7 @@ class NewLessonAdapter(val lang :String,var chap :Int,var colorDark: Int, var co
             context.startActivity(intent)
 
         }
+
 
     }
 

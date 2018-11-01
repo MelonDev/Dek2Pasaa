@@ -1,10 +1,9 @@
 package th.ac.up.se.takingbear
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.squareup.picasso.Picasso
 
 import kotlinx.android.synthetic.main.activity_quiz.*
@@ -58,7 +57,7 @@ class QuizActivity : AppCompatActivity() {
         var a = weight / 40
         quiz_message.textSize = a.toFloat()
 
-        data = Quiz().getChapter(0, x)
+        //data = Quiz().getChapter(0, x)
         var card = data[y]
 
         sq = LangSQ(this)

@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 import android.database.Cursor
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import th.ac.up.se.takingbear.R
 
 

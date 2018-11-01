@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/quiz_image_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -88,7 +88,7 @@
                 </RelativeLayout>
 
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
 
             <RelativeLayout
@@ -98,7 +98,7 @@
                 android:layout_marginLeft="200dp">
 
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_alignParentBottom="true"
@@ -143,7 +143,7 @@
                     </RelativeLayout>
 
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
                 <RelativeLayout
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/quiz_choice_a"
                             android:minWidth="150dp"
                             android:layout_width="wrap_content"
@@ -180,9 +180,9 @@
                                 android:textColor="#484848"
                                 android:textSize="46dp" />
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/quiz_choice_b"
                             android:minWidth="150dp"
                             android:layout_width="wrap_content"
@@ -203,7 +203,7 @@
                                 android:textColor="#484848"
                                 android:textSize="46dp" />
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                     </LinearLayout>
 
@@ -221,7 +221,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 app:cardBackgroundColor="@color/colorWhite"
                 android:layout_centerInParent="true"
                 android:layout_width="300dp"
@@ -302,7 +302,7 @@
 
                 </RelativeLayout>
 
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
         </RelativeLayout>
 
@@ -310,4 +310,4 @@
     </RelativeLayout>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

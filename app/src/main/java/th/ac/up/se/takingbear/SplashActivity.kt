@@ -3,12 +3,15 @@ package th.ac.up.se.takingbear
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 
 import kotlinx.android.synthetic.main.activity_splash.*
 import th.ac.up.se.takingbear.Tools.FSTool
+import com.facebook.AccessToken
+import com.google.firebase.auth.FirebaseAuth
+
 
 class SplashActivity : AppCompatActivity() {
 
@@ -29,11 +32,45 @@ class SplashActivity : AppCompatActivity() {
 
         runnable = Runnable {
 
-            val intent = Intent(this, MainActivity::class.java)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,splash_logo , "logo")
+/*
+            val accessToken = AccessToken.getCurrentAccessToken()
+            //Log.e("AC",accessToken.toString())
+            val isLoggedIn = accessToken != null && !accessToken.isExpired
 
-            startActivity(intent, options.toBundle())
-            //finish()
+            if(isLoggedIn){
+                val intent = Intent(this, MainActivity::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,splash_logo , "logo")
+
+                startActivity(intent, options.toBundle())
+            } else {
+                val intent = Intent(this, FacebookLoginActivity::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,splash_logo , "logo")
+
+                startActivity(intent, options.toBundle())
+            }
+*/
+
+            if(FirebaseAuth.getInstance().currentUser == null){
+
+                val intent = Intent(this, GoogleSignInActivity::class.java)
+                //val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,splash_logo , "logo")
+
+                startActivity(intent)
+
+                finish()
+
+            }else {
+
+                val intent = Intent(this, MainActivity::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,splash_logo , "logo")
+
+                startActivity(intent, options.toBundle())
+
+                finish()
+
+            }
+
+
 
             finish = true
 

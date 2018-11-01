@@ -3,13 +3,14 @@ package th.ac.up.se.takingbear
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.*
 
 import kotlinx.android.synthetic.main.activity_list_card.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -19,10 +20,11 @@ import th.ac.up.agr.thai_mini_chicken.Tools.QuickRecyclerView
 import th.ac.up.se.takingbear.Adapter.ChapterAdapter
 import th.ac.up.se.takingbear.Adapter.NewLessonAdapter
 import th.ac.up.se.takingbear.Adapter.NumberAdapter
-import th.ac.up.se.takingbear.Data.Chapter
+import th.ac.up.se.takingbear.Data.*
 import th.ac.up.se.takingbear.SQLite.ChapterSQ
 import th.ac.up.se.takingbear.Tools.CardAnimation
 import th.ac.up.se.takingbear.Tools.FSTool
+import th.ac.up.se.takingbear.Tools.MelonFirebaseProcess
 import th.ac.up.se.thaicardgame.DataArray.Lesson
 import th.ac.up.se.thaicardgame.DataArray.Quiz
 
@@ -36,9 +38,38 @@ class ListCardActivity : AppCompatActivity() {
     var id: Int = -1
     var colorDark: Int = 0
 
-    lateinit var sqlite :LangSQ
+    private lateinit var dataChapter: ArrayList<Chapter>
+    private lateinit var dataCheck: ArrayList<ChapterCheck>
+    private lateinit var dataLesson: ArrayList<WordInfo>
+
+    private lateinit var dataNumber: ArrayList<TestInfo>
+
+
+    private lateinit var adapterChapter: ChapterAdapter
+    private lateinit var adapterNumber: NumberAdapter
+    private lateinit var adapterWord: NewLessonAdapter
+
+
+    private lateinit var firebase: DatabaseReference
+
+    private lateinit var task: MelonFirebaseProcess
+
+    lateinit var sqlite: LangSQ
 
     private lateinit var fullScreen: FSTool
+
+    fun selector(p: Chapter): Int {
+        return p.info.number
+    }
+
+    fun selector(p: TestInfo): Int {
+        return p.number
+    }
+
+    fun selector(p: WordInfo): Int {
+        return p.number
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +79,17 @@ class ListCardActivity : AppCompatActivity() {
         //supportPostponeEnterTransition()
 
         sqlite = LangSQ(this)
+
+        firebase = FirebaseDatabase.getInstance().reference
+
+        task = MelonFirebaseProcess()
+
+        dataChapter = ArrayList()
+        dataCheck = ArrayList()
+        dataLesson = ArrayList()
+
+        dataNumber = ArrayList()
+
 
         bundle = intent.extras
         color = bundle.getInt("COLOR")
@@ -103,24 +145,46 @@ class ListCardActivity : AppCompatActivity() {
             recyclerView.layoutAnimation = CardAnimation(this).horizontalAnimation()
 
 
+            /*
+            dataChapter = if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                Lesson().getThaiChapter()
+            } else {
+                Lesson().getEngChapter()
+            }*/
 
-            if (id == 0) {
-                var data = if(sqlite.read().contentEquals(LangSQ.THAI)){
-                    Lesson().getThaiChapter()
-                }else {
-                    Lesson().getEngChapter()
+
+            adapterChapter = ChapterAdapter(this.colorDark, this.color, "LAND", dataChapter)
+            recyclerView.adapter = adapterChapter
+
+            task.startLoad()
+
+
+            firebase.child("Lessons").addValueEventListener(object : ValueEventListener {
+
+
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.e("", "")
                 }
-                var adapter = ChapterAdapter(this.colorDark, this.color, "LAND", data)
-                recyclerView.adapter = adapter
-            } else if (id == 1) {
-                var data = if(sqlite.read().contentEquals(LangSQ.THAI)){
-                    Quiz().getThaiChapter()
-                }else {
-                    Quiz().getEngChapter()
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.value != null) {
+
+
+                        if (task.isInActive()) {
+                            task.activeNow()
+                            ChapterLoadData(p0)
+                        } else {
+                            task.overActive(p0)
+                        }
+
+
+                    } else {
+                        dataChapter.clear()
+                    }
                 }
-                var adapter = ChapterAdapter(this.colorDark, this.color, "LAND", data)
-                recyclerView.adapter = adapter
-            }
+            })
+
+            //ChapterLoadData()
 
 
         } else if (id == 100) {
@@ -136,11 +200,11 @@ class ListCardActivity : AppCompatActivity() {
                     .recyclerView()
             //adapter = CustomPlanAdapter(this, arrCustom)
 
-            var position = bundle.getInt("CHAPTER")
+            var key = bundle.getString("CHAPTER")
 
-            var d = Quiz().getChapter(0, position)
+            //var d = Quiz().getChapter(0, position)
 
-            var sqlite = ChapterSQ(this, ChapterSQ.convertName(position), d.size)
+            //var sqlite = ChapterSQ(this, ChapterSQ.convertName(position), d.size)
             //Toast.makeText(this,sqlite.getSize().toString(),Toast.LENGTH_SHORT).show()
 
             //Log.e(d.size.toString(),position.toString())
@@ -150,7 +214,7 @@ class ListCardActivity : AppCompatActivity() {
             //sqlite.passedQuiz(3,true)
             //sqlite.clearAll()
 
-            var data = sqlite.getData()
+            //dataCheck = sqlite.getData()
 
 
             /*data.forEach {
@@ -164,13 +228,44 @@ class ListCardActivity : AppCompatActivity() {
 
             OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL)
 
-            var adapter = NumberAdapter(this, d, data, color, colorDark, position)
+            adapterNumber = NumberAdapter(this, dataNumber, color, colorDark)
             recyclerView.setPadding(dpsToPixels(this, 30), dpsToPixels(this, 100), dpsToPixels(this, 10), 0)
             recyclerView.clipToPadding = false
 
             recyclerView.layoutAnimation = CardAnimation(this).fastHorizontalAnimation()
 
-            recyclerView.adapter = adapter
+            recyclerView.adapter = adapterNumber
+
+
+            task.startLoad()
+
+
+            firebase.child("Lessons").child(key).child("Tests").addValueEventListener(object : ValueEventListener {
+
+
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.e("", "")
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.value != null) {
+
+
+                        if (task.isInActive()) {
+                            task.activeNow()
+                            QuizLoadData(p0)
+                        } else {
+                            task.overActive(p0)
+                        }
+
+
+                    } else {
+                        dataNumber.clear()
+                    }
+                }
+            })
+
+            //recyclerView.adapter = adapter
         } else if (id == 101) {
             //Log.e("COLOR",colorDark.toString())
             recyclerView = QuickRecyclerView(this
@@ -186,8 +281,8 @@ class ListCardActivity : AppCompatActivity() {
 
             OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL)
 
-            var position = bundle.getInt("CHAPTER")
-            var data = Lesson().getChapter(position)
+            var key = bundle.getString("CHAPTER")
+            //dataLesson = Lesson().getChapter(position)
 
             var w = DeviceUtills(this).getScreenWidth()
             var h = DeviceUtills(this).getScreenHeight()
@@ -201,16 +296,46 @@ class ListCardActivity : AppCompatActivity() {
             //var height = h - dpsToPixels(this,120)
             //var width = (height/4)*3
 
-            var x = bundle.getInt("POS")
+            //var x = bundle.getInt("POS")
 
 
-            var adapter = NewLessonAdapter(sqlite.read(),x, this.colorDark, this.color, "LAND", data)
+            adapterWord = NewLessonAdapter(sqlite.read(), this.colorDark, this.color, "LAND", dataLesson)
             recyclerView.setPadding(dpsToPixels(this, 30), dpsToPixels(this, 100), dpsToPixels(this, 10), 0)
             recyclerView.clipToPadding = false
 
             recyclerView.layoutAnimation = CardAnimation(this).horizontalAnimation()
 
-            recyclerView.adapter = adapter
+            recyclerView.adapter = adapterWord
+
+            task.startLoad()
+
+
+            firebase.child("Lessons").child(key).child("Words").addValueEventListener(object : ValueEventListener {
+
+
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.e("", "")
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.value != null) {
+
+
+                        if (task.isInActive()) {
+                            task.activeNow()
+                            WordLoadData(p0)
+                        } else {
+                            task.overActive(p0)
+                        }
+
+
+                    } else {
+                        dataLesson.clear()
+                    }
+                }
+            })
+
+
         }
 
 
@@ -220,6 +345,204 @@ class ListCardActivity : AppCompatActivity() {
         super.onResume()
 
         fullScreen.loadFunction()
+
+
+    }
+
+    private fun ChapterLoadData(dataSnapshot: DataSnapshot) {
+
+        var count = 0
+
+        dataChapter.clear()
+
+        //Log.e("SIZE",dataSnapshot.children.count().toString())
+
+
+        dataSnapshot.children.forEach {
+
+            val key = it.key.toString()
+            //Log.e("KEY",key)
+
+
+            firebase.child("Lessons").child(key).child("Info").addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.e("", "")
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+
+                    if (p0.value != null) {
+
+
+                        count += 1
+
+                        val info = p0.getValue(LessonInfo::class.java)!!
+
+                        if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                            val chapter: Chapter = Chapter(info.nameThai, info.cover)
+                            chapter.info = info
+                            dataChapter.add(chapter)
+
+                            dataChapter.sortBy { selector(it) }
+                            adapterChapter.notifyDataSetChanged()
+
+                            //Log.e("size2",dataChapter.size.toString())
+
+                        } else {
+                            val chapter: Chapter = Chapter(info.nameEng, info.cover)
+                            chapter.info = info
+                            dataChapter.add(chapter)
+                            dataChapter.sortBy { selector(it) }
+
+                            adapterChapter.notifyDataSetChanged()
+
+                            //Log.e("size3",dataChapter.size.toString())
+
+                        }
+
+                        dataChapter.sortBy { selector(it) }
+
+                        adapterChapter.notifyDataSetChanged()
+
+
+                        if (count == dataSnapshot.children.count()) {
+
+                            val p = task.loadOverActive()
+
+                            if (p != null) {
+                                //Log.e("TEST","TEST")
+                                ChapterLoadData(it!!)
+                            }
+
+                        }
+
+                    }
+                }
+            })
+
+
+        }
+
+
+    }
+
+    private fun QuizLoadData(dataSnapshot: DataSnapshot) {
+
+        var count = 0
+
+        dataNumber.clear()
+
+        //Log.e("SIZE",dataSnapshot.children.count().toString())
+
+
+        dataSnapshot.children.forEach {
+
+            val key = it.key.toString()
+            //Log.e("KEY",key)
+
+
+            count += 1
+
+            val info = it.getValue(TestInfo::class.java)!!
+
+            if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                //val chapter: Chapter = Chapter(info.nameThai, info.cover)
+                //chapter.info = info
+                dataNumber.add(info)
+                dataNumber.sortBy { selector(it) }
+
+                adapterNumber.notifyDataSetChanged()
+
+                //Log.e("size2",dataChapter.size.toString())
+
+            } else {
+                dataNumber.add(info)
+                dataNumber.sortBy { selector(it) }
+                adapterNumber.notifyDataSetChanged()
+
+                //Log.e("size3",dataChapter.size.toString())
+
+            }
+            dataNumber.sortBy { selector(it) }
+
+            adapterNumber.notifyDataSetChanged()
+
+
+            if (count == dataSnapshot.children.count()) {
+
+                val p = task.loadOverActive()
+
+                if (p != null) {
+                    //Log.e("TEST","TEST")
+                    QuizLoadData(it!!)
+                }
+
+            }
+
+
+        }
+
+
+    }
+
+    private fun WordLoadData(dataSnapshot: DataSnapshot) {
+
+        var count = 0
+
+        dataLesson.clear()
+
+        //Log.e("SIZE",dataSnapshot.children.count().toString())
+
+
+        dataSnapshot.children.forEach {
+
+            val key = it.key.toString()
+            //Log.e("KEY",key)
+            count += 1
+
+            val info = it.getValue(WordInfo::class.java)!!
+            //Log.e("IMG","S ${info.key}")
+
+
+            if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                //val chapter: Chapter = Chapter(info.nameThai, info.cover)
+                //chapter.info = info
+                dataLesson.add(info)
+
+                dataLesson.sortBy { selector(it) }
+                adapterWord.notifyDataSetChanged()
+
+
+                //Log.e("size2",dataChapter.size.toString())
+
+            } else {
+                dataLesson.add(info)
+                dataLesson.sortBy { selector(it) }
+
+                adapterWord.notifyDataSetChanged()
+
+                //Log.e("size3",dataChapter.size.toString())
+
+            }
+
+            dataLesson.sortBy { selector(it) }
+            adapterWord.notifyDataSetChanged()
+
+
+            if (count == dataSnapshot.children.count()) {
+
+                val p = task.loadOverActive()
+
+                if (p != null) {
+                    //Log.e("TEST","TEST")
+                    WordLoadData(it!!)
+                }
+
+            }
+
+
+        }
 
 
     }

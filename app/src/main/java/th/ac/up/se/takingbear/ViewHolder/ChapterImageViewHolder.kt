@@ -1,7 +1,7 @@
 package th.ac.up.se.takingbear.ViewHolder
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.chapter_card_image.view.*
 import kotlinx.android.synthetic.main.chapter_card_land.view.*
 

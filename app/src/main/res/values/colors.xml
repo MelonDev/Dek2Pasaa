@@ -11,6 +11,8 @@
 
     <color name="colorShadow">#BDBDBD</color>
 
+    <color name="facebookColor">#3B5998</color>
+
     <color name="colorText">#939393</color>
     <color name="colorTabInActiveText">#99ffffff</color>
 

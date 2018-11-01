@@ -1,10 +1,6 @@
 package th.ac.up.se.takingbear
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.CardView
 import android.util.TypedValue
 
 import kotlinx.android.synthetic.main.activity_lesson.*
@@ -18,10 +14,20 @@ import android.text.style.RelativeSizeSpan
 import android.view.View
 import com.squareup.picasso.Picasso
 import android.R.raw
+import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -34,7 +40,13 @@ import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.util.Util
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
+import th.ac.up.se.takingbear.Data.WordInfo
+import java.util.*
 
 
 class LessonActivity : AppCompatActivity() {
@@ -42,8 +54,8 @@ class LessonActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
     private var color: Int = 0
     private var colorDark: Int = 0
-    private var x: Int = 0
-    private var y: Int = 0
+    private var msKey: String = ""
+    private var key: String = ""
     private var weight: Int = 0
     private var height: Int = 0
 
@@ -58,7 +70,7 @@ class LessonActivity : AppCompatActivity() {
 
     private var start = false
 
-    lateinit var sqlite :LangSQ
+    lateinit var sqlite: LangSQ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,16 +81,18 @@ class LessonActivity : AppCompatActivity() {
         bundle = intent.extras
         color = bundle.getInt("COLOR")
         colorDark = bundle.getInt("DARK")
-        x = bundle.getInt("CHAP")
-        y = bundle.getInt("POS")
+        msKey = bundle.getString("MSKEY")
+        key = bundle.getString("KEY")
 
-        position = y
+        Log.e(msKey, key)
 
-        data = Lesson().getChapter(x + 1)
-        var card = data[y]
+        //position = y
+
+        //data = Lesson().getChapter(x + 1)
+        //var card = data[y]
 
         sqlite = LangSQ(this)
-        if(sqlite.read().contentEquals(LangSQ.THAI)){
+        if (sqlite.read().contentEquals(LangSQ.THAI)) {
             list_card_title_A.text = "กลับ"
             list_card_title_B.text = "กลับ"
         } else {
@@ -102,8 +116,28 @@ class LessonActivity : AppCompatActivity() {
         lesson_text_B.textSize = a.toFloat()
         lesson_text_C.textSize = a.toFloat()
 
-        cardToAny(card)
+        FirebaseDatabase.getInstance()
+                .reference
+                .child("Lessons")
+                .child(msKey)
+                .child("Words")
+                .child(key)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        Log.e("", "")
+                    }
 
+                    override fun onDataChange(p0: DataSnapshot) {
+                        if (p0.value != null) {
+                            val card = p0.getValue(WordInfo::class.java)!!
+                            cardToAny(card)
+                        }
+                    }
+                })
+
+        //cardToAny(card)
+
+        /*
         lesson_forward_btn.setOnClickListener {
             if (position != data.size - 1) {
                 position += 1
@@ -125,21 +159,46 @@ class LessonActivity : AppCompatActivity() {
                     media.stop()
                 }
             }
-        }
+        }*/
 
 
     }
 
-    private fun cardToAny(card: LessonCard) {
+    private fun cardToAny(card: WordInfo) {
 
-        Picasso.get().load(card.image).into(lesson_main_image)
 
-        if(card.nameThaiSpecial.isEmpty()){
+        if (card.cover.isNotEmpty()) {
+            //Picasso.get().load(card.cover).into(lesson_main_image)
+            Glide.with(this)
+                    .load(card.cover)
+                    .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(p0: GlideException?, p1: Any?, p2: Target<Drawable>?, p3: Boolean): Boolean {
+                    Log.e("", "")
+                    return false
+                }
+
+                override fun onResourceReady(p0: Drawable?, p1: Any?, p2: Target<Drawable>?, p3: DataSource?, p4: Boolean): Boolean {
+                    Log.e("S", "S")
+                    //do something when picture already loaded
+                    return false
+                }
+            })
+                    .into(lesson_main_image)
+
+
+            lesson_main_card_image.visibility = View.VISIBLE
+
+        } else {
+            lesson_main_card_image.visibility = View.GONE
+        }
+
+        if (card.read.isEmpty()) {
             lesson_text_A.visibility = View.GONE
-        }else {
+        } else {
             lesson_text_A.visibility = View.VISIBLE
         }
 
+        /*
         if (position == 0) {
             lesson_backward_btn.mAlpha(true)
             lesson_forward_btn.mAlpha(false)
@@ -151,27 +210,27 @@ class LessonActivity : AppCompatActivity() {
             lesson_forward_btn.mAlpha(false)
 
         }
-
+        */
 
 
         var sA = SpannableStringBuilder()
         var sB = SpannableStringBuilder()
         var sC = SpannableStringBuilder()
 
-        if(sqlite.read().contentEquals(LangSQ.THAI)){
+        if (sqlite.read().contentEquals(LangSQ.THAI)) {
 
             lesson_backward_text.text = "ก่อนหน้า"
             lesson_forward_text.text = "ถัดไป"
 
-            sA = spacialText("คำอ่าน: ", card.nameThaiSpecial)
+            sA = spacialText("คำอ่าน: ", card.read)
             sB = spacialText("ภาษาไทย: ", card.nameThai)
             sC = spacialText("ภาษาอังกฤษ: ", card.nameEng)
-        }else {
+        } else {
 
             lesson_backward_text.text = "Previous"
             lesson_forward_text.text = "Next"
 
-            sA = spacialText("Pronunciation: ", card.nameThaiSpecial)
+            sA = spacialText("Pronunciation: ", card.read)
             sB = spacialText("Thai: ", card.nameThai)
             sC = spacialText("English: ", card.nameEng)
         }
@@ -180,29 +239,29 @@ class LessonActivity : AppCompatActivity() {
         lesson_text_B.text = sB
         lesson_text_C.text = sC
 
-        if (card.audioEng == 0) {
+        if (card.engSound.isEmpty()) {
             lesson_eng_btn.visibility = View.GONE
         } else {
             lesson_eng_btn.visibility = View.VISIBLE
-            audioClick(false, lesson_eng_btn, lesson_eng_btn_image)
+            //audioClick(false, lesson_eng_btn, lesson_eng_btn_image)
         }
 
-        if (card.audioThai == 0) {
+        if (card.thaiSound.isEmpty()) {
             lesson_thai_btn.visibility = View.GONE
         } else {
             lesson_thai_btn.visibility = View.VISIBLE
-            audioClick(false, lesson_thai_btn, lesson_thai_btn_image)
+            //audioClick(false, lesson_thai_btn, lesson_thai_btn_image)
 
         }
 
 
         lesson_thai_btn.setOnClickListener {
-            card.audioThai.playSound(lesson_thai_btn, lesson_thai_btn_image)
+            //card.audioThai.playSound(lesson_thai_btn, lesson_thai_btn_image)
         }
 
 
         lesson_eng_btn.setOnClickListener {
-            card.audioEng.playSound(lesson_eng_btn, lesson_eng_btn_image)
+            //card.audioEng.playSound(lesson_eng_btn, lesson_eng_btn_image)
         }
 
     }

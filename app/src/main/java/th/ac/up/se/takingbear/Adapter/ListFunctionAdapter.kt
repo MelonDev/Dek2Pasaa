@@ -3,9 +3,6 @@ package th.ac.up.se.takingbear.Adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,16 +10,19 @@ import th.ac.up.se.takingbear.Data.MainFunctionData
 import th.ac.up.se.takingbear.ListCardActivity
 import th.ac.up.se.takingbear.R
 import th.ac.up.se.takingbear.ViewHolder.ListFunctionViewHolder
-import android.support.v4.app.ActivityOptionsCompat
 import android.util.TypedValue
 import android.widget.RelativeLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.CompetitionActivity
 import th.ac.up.se.takingbear.ViewHolder.FunctionViewHolder
 
 
-class ListFunctionAdapter(var activity: FragmentActivity,val data :ArrayList<MainFunctionData>) : RecyclerView.Adapter<FunctionViewHolder>(){
+class ListFunctionAdapter(var activity: FragmentActivity, val data :ArrayList<MainFunctionData>) : RecyclerView.Adapter<FunctionViewHolder>(){
 
     private lateinit var context :Context
 

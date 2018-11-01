@@ -1,11 +1,11 @@
 package th.ac.up.se.takingbear
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+
 import android.util.TypedValue
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_competition.*
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 
