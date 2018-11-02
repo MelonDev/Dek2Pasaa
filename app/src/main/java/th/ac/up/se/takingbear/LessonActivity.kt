@@ -19,6 +19,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -47,6 +48,7 @@ import com.google.firebase.database.ValueEventListener
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.se.takingbear.Data.WordInfo
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class LessonActivity : AppCompatActivity() {
@@ -62,6 +64,8 @@ class LessonActivity : AppCompatActivity() {
     private var play = false
 
     private lateinit var data: ArrayList<LessonCard>
+    private lateinit var dataWord: ArrayList<WordInfo>
+
 
     private var position = -1
 
@@ -69,6 +73,14 @@ class LessonActivity : AppCompatActivity() {
     private var current = 0
 
     private var start = false
+
+    private var pre = ""
+    private var post = ""
+
+    private var currentPosition = 0
+
+    var mediaPlayer: MediaPlayer? = null
+
 
     lateinit var sqlite: LangSQ
 
@@ -78,13 +90,20 @@ class LessonActivity : AppCompatActivity() {
 
         FSTool(window).loadFunction()
 
-        bundle = intent.extras
+        bundle = intent.extras!!
         color = bundle.getInt("COLOR")
         colorDark = bundle.getInt("DARK")
-        msKey = bundle.getString("MSKEY")
-        key = bundle.getString("KEY")
+        msKey = bundle.getString("MSKEY")!!
+        key = bundle.getString("KEY")!!
 
-        Log.e(msKey, key)
+        pre = bundle.getString("PRE")!!
+        post = bundle.getString("POST")!!
+
+
+        //Log.e(pre, post)
+        //Log.e("KEY",key)
+
+        dataWord = ArrayList()
 
         //position = y
 
@@ -116,29 +135,14 @@ class LessonActivity : AppCompatActivity() {
         lesson_text_B.textSize = a.toFloat()
         lesson_text_C.textSize = a.toFloat()
 
-        FirebaseDatabase.getInstance()
-                .reference
-                .child("Lessons")
-                .child(msKey)
-                .child("Words")
-                .child(key)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {
-                        Log.e("", "")
-                    }
-
-                    override fun onDataChange(p0: DataSnapshot) {
-                        if (p0.value != null) {
-                            val card = p0.getValue(WordInfo::class.java)!!
-                            cardToAny(card)
-                        }
-                    }
-                })
+        onload()
 
         //cardToAny(card)
 
-        /*
+
         lesson_forward_btn.setOnClickListener {
+            takePost()
+            /*
             if (position != data.size - 1) {
                 position += 1
                 cardToAny(data[position])
@@ -148,19 +152,129 @@ class LessonActivity : AppCompatActivity() {
                 }
 
             }
+            */
         }
 
         lesson_backward_btn.setOnClickListener {
+            takePre()
+            /*
             if (position != 0) {
+
                 position -= 1
                 cardToAny(data[position])
                 play = false
                 if (start) {
                     media.stop()
                 }
-            }
-        }*/
+            }*/
+        }
 
+
+    }
+
+    private fun onload() {
+        dataWord.clear()
+
+        FirebaseDatabase.getInstance()
+                .reference
+                .child("Lessons")
+                .child(msKey)
+                .child("Words")
+                //.child(key)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        Log.e("", "")
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        if (p0.value != null) {
+                            //val card = p0.getValue(WordInfo::class.java)!!
+                            //cardToAny(card)
+
+                            var count = 0
+
+                            //Log.e("SAD","sss ${p0.children.count()}")
+
+
+                            p0.children.forEach {
+                                val card = it.getValue(WordInfo::class.java)!!
+                                dataWord.add(card)
+
+                                count += 1
+
+                                if (count == p0.children.count()) {
+
+                                    dataWord.sortBy { selector(it) }
+
+                                    checkPosition(true)
+
+                                }
+                            }
+
+                        }
+                    }
+                })
+    }
+
+    private fun takePre() {
+        if (currentPosition > 0 && currentPosition < dataWord.size) {
+
+            //Log.e("POS1",currentPosition.toString())
+
+
+            currentPosition -= 1
+
+            checkPosition(false)
+        }
+    }
+
+    private fun takePost() {
+        if (currentPosition >= 0 && currentPosition < dataWord.size - 1) {
+
+            //Log.e("POS2",currentPosition.toString())
+
+            currentPosition += 1
+
+            checkPosition(false)
+        }
+    }
+
+    private fun checkPosition(toPos: Boolean) {
+
+        dataWord.forEach {
+
+            if (it.key == this.key) {
+                val position = it.number - 1
+
+                if (toPos) {
+                    currentPosition = position
+                }
+
+                Log.e("POS", currentPosition.toString())
+
+
+                if (currentPosition > 0 && currentPosition < (dataWord.size - 1)) {
+                    pre = dataWord[currentPosition - 1].key
+                    post = dataWord[currentPosition + 1].key
+                } else if (currentPosition > 0 && currentPosition == (dataWord.size - 1)) {
+                    pre = dataWord[currentPosition - 1].key
+                    post = "NULL"
+                } else if (currentPosition == 0 && currentPosition < (dataWord.size - 1)) {
+                    pre = "NULL"
+                    post = dataWord[currentPosition + 1].key
+                } else {
+                    pre = "NULL"
+                    post = "NULL"
+                }
+
+                //Log.e(pre,post)
+
+                cardToAny(dataWord[currentPosition])
+            } else {
+                //Log.e("TEST","TEST")
+            }
+
+        }
 
     }
 
@@ -172,17 +286,17 @@ class LessonActivity : AppCompatActivity() {
             Glide.with(this)
                     .load(card.cover)
                     .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(p0: GlideException?, p1: Any?, p2: Target<Drawable>?, p3: Boolean): Boolean {
-                    Log.e("", "")
-                    return false
-                }
+                        override fun onLoadFailed(p0: GlideException?, p1: Any?, p2: Target<Drawable>?, p3: Boolean): Boolean {
+                            Log.e("", "")
+                            return false
+                        }
 
-                override fun onResourceReady(p0: Drawable?, p1: Any?, p2: Target<Drawable>?, p3: DataSource?, p4: Boolean): Boolean {
-                    Log.e("S", "S")
-                    //do something when picture already loaded
-                    return false
-                }
-            })
+                        override fun onResourceReady(p0: Drawable?, p1: Any?, p2: Target<Drawable>?, p3: DataSource?, p4: Boolean): Boolean {
+                            Log.e("S", "S")
+                            //do something when picture already loaded
+                            return false
+                        }
+                    })
                     .into(lesson_main_image)
 
 
@@ -198,19 +312,24 @@ class LessonActivity : AppCompatActivity() {
             lesson_text_A.visibility = View.VISIBLE
         }
 
-        /*
-        if (position == 0) {
+
+
+        if (dataWord.size == 1) {
             lesson_backward_btn.mAlpha(true)
-            lesson_forward_btn.mAlpha(false)
-        } else if (position == data.size - 1) {
-            lesson_backward_btn.mAlpha(false)
             lesson_forward_btn.mAlpha(true)
         } else {
-            lesson_backward_btn.mAlpha(false)
-            lesson_forward_btn.mAlpha(false)
+            if (currentPosition == 0) {
+                lesson_backward_btn.mAlpha(true)
+                lesson_forward_btn.mAlpha(false)
+            } else if (currentPosition == dataWord.size - 1) {
+                lesson_backward_btn.mAlpha(false)
+                lesson_forward_btn.mAlpha(true)
+            } else {
+                lesson_backward_btn.mAlpha(false)
+                lesson_forward_btn.mAlpha(false)
 
+            }
         }
-        */
 
 
         var sA = SpannableStringBuilder()
@@ -239,6 +358,10 @@ class LessonActivity : AppCompatActivity() {
         lesson_text_B.text = sB
         lesson_text_C.text = sC
 
+        lesson_eng_btn_progress.visibility = View.GONE
+        lesson_thai_btn_progress.visibility = View.GONE
+
+
         if (card.engSound.isEmpty()) {
             lesson_eng_btn.visibility = View.GONE
         } else {
@@ -256,48 +379,77 @@ class LessonActivity : AppCompatActivity() {
 
 
         lesson_thai_btn.setOnClickListener {
-            //card.audioThai.playSound(lesson_thai_btn, lesson_thai_btn_image)
+            dataWord[currentPosition].thaiSound.playSound(lesson_thai_btn, lesson_thai_btn_image,lesson_thai_btn_progress)
         }
-
 
         lesson_eng_btn.setOnClickListener {
-            //card.audioEng.playSound(lesson_eng_btn, lesson_eng_btn_image)
+            dataWord[currentPosition].engSound.playSound(lesson_eng_btn, lesson_eng_btn_image,lesson_eng_btn_progress)
         }
+
+        /*
+    lesson_thai_btn.setOnClickListener
+    {
+        //card.audioThai.playSound(lesson_thai_btn, lesson_thai_btn_image)
+    }
+
+
+    lesson_eng_btn.setOnClickListener
+    {
+        //card.audioEng.playSound(lesson_eng_btn, lesson_eng_btn_image)
+    }
+*/
 
     }
 
-    private fun Int.playSound(cardView: CardView, image: ImageView) {
-        if (this != 0) {
+    private fun String.playSound(cardView: CardView, image: ImageView,progress: ProgressBar) {
+
+        if (this.isNotEmpty()) {
+            //progress.visibility = View.VISIBLE
             start = true
             if (!play) {
-                media = MediaPlayer.create(this@LessonActivity, this)
-                media.start()
+                //media = MediaPlayer.create(this@LessonActivity, this)
+                //media.start()
                 play = true
-                audioClick(true, cardView, image)
+                audioClick(true, cardView, image,progress)
+
+                mediaPlayer = MediaPlayer()
+
+                mediaPlayer!!.setDataSource(this)
+                mediaPlayer!!.prepare()
+                mediaPlayer!!.start()
 
 
-                media.setOnCompletionListener {
+                mediaPlayer!!.setOnCompletionListener {
+
+                    mediaPlayer!!.stop()
+                    mediaPlayer = null
+
                     play = false
-                    audioClick(false, cardView, image)
-                    //Toast.makeText(this@LessonActivity,"STOP",Toast.LENGTH_SHORT).show()
+                    audioClick(false, cardView, image,progress)
+
                 }
+
+
             } else {
                 play = false
-                media.stop()
+                mediaPlayer!!.stop()
+                mediaPlayer = null
 
-                audioClick(false, lesson_thai_btn, lesson_thai_btn_image)
-                audioClick(false, lesson_eng_btn, lesson_eng_btn_image)
+                audioClick(false, lesson_thai_btn, lesson_thai_btn_image,lesson_thai_btn_progress)
+                audioClick(false, lesson_eng_btn, lesson_eng_btn_image,lesson_eng_btn_progress)
             }
         }
     }
 
-    private fun audioClick(action: Boolean, card: CardView, image: ImageView) {
+    private fun audioClick(action: Boolean, card: CardView, image: ImageView,progress :ProgressBar) {
 
         if (action) {
+            progress.visibility = View.GONE
             card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorWhite))
             image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause))
             image.setColorFilter(ContextCompat.getColor(this, R.color.colorRedDark), android.graphics.PorterDuff.Mode.SRC_IN)
         } else {
+            progress.visibility = View.GONE
             card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorRedDark))
             image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_speaker))
             image.setColorFilter(ContextCompat.getColor(this, R.color.colorWhite), android.graphics.PorterDuff.Mode.SRC_IN)
@@ -338,11 +490,18 @@ class LessonActivity : AppCompatActivity() {
         FSTool(window).loadFunction()
     }
 
+    fun selector(p: WordInfo): Int {
+        return p.number
+    }
+
+
     private fun dpsToPixels(dps: Int): Int {
         val r = this.resources
 
         return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dps.toFloat(), r.displayMetrics).toInt()
     }
+
+
 
 }

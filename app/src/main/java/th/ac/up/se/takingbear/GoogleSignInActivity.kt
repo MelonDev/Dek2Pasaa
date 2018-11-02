@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 import com.mylhyl.circledialog.CircleDialog
 import com.mylhyl.circledialog.callback.ConfigButton
 import com.mylhyl.circledialog.callback.ConfigDialog
@@ -25,6 +26,7 @@ import com.mylhyl.circledialog.params.ButtonParams
 import com.mylhyl.circledialog.params.DialogParams
 import com.mylhyl.circledialog.params.ProgressParams
 import com.mylhyl.circledialog.params.TextParams
+import com.up.se.tkbcontrol.Data.PeopleInfo
 
 import kotlinx.android.synthetic.main.activity_google_sign_in.*
 import kotlinx.android.synthetic.main.activity_splash.*
@@ -95,13 +97,23 @@ class GoogleSignInActivity : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        waitDialog.dismiss()
 
-                        val intent = Intent(this, MainActivity::class.java)
+                        val fa = FirebaseAuth.getInstance().currentUser!!
 
-                        startActivity(intent)
+                        val user = PeopleInfo()
+                        user.apply {
+                            this.key = fa.uid
+                            this.name = fa.displayName.toString()
+                        }
 
-                        finish()
+                        FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").setValue(user).addOnSuccessListener {
+                            waitDialog.dismiss()
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+
+
 
                         //startProcess()
 

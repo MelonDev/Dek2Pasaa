@@ -26,7 +26,7 @@ import th.ac.up.se.takingbear.SQLite.ChapterSQ
 import th.ac.up.se.takingbear.ViewHolder.NumberViewHolder
 import th.ac.up.se.thaicardgame.DataArray.Quiz
 
-class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<TestInfo>, var color: Int, var colorDark: Int) : RecyclerView.Adapter<NumberViewHolder>() {
+class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<TestInfo>,var checkData :ArrayList<ChapterCheck>, var color: Int, var colorDark: Int) : RecyclerView.Adapter<NumberViewHolder>() {
 
     lateinit var context: Context
     var weight: Int = 0
@@ -50,17 +50,27 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 
     override fun onBindViewHolder(holder: NumberViewHolder, position: Int) {
 
-        holder.open()
+        //holder.open()
 
-        /*
-        if (check[position].passed) {
-            holder.star()
-        } else if (check[position].opened) {
-            holder.open()
-        } else {
-            holder.close()
+        checkData.forEach {
+
+            if(it.key.contentEquals(data[position].key)){
+
+
+                if (it.passed) {
+                    holder.star()
+                } else if (it.opened) {
+                    holder.open()
+                } else {
+                    holder.close()
+                }
+
+            }
+
         }
-        */
+
+
+
 
         /*
         if(position <= 3){

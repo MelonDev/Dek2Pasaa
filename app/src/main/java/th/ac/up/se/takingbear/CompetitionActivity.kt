@@ -29,10 +29,10 @@ class CompetitionActivity : AppCompatActivity() {
         FSTool(window).loadFunction()
 
 
-        bundle = intent.extras
+        bundle = intent.extras!!
         color = bundle.getInt("COLOR")
         colorDark = bundle.getInt("DARK")
-        title = bundle.getString("TITLE")
+        title = bundle.getString("TITLE")!!
         id = bundle.getInt("ID")
 
         weight = DeviceUtills(this.applicationContext).getScreenWidth()

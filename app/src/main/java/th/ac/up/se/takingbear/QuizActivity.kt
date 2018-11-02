@@ -39,7 +39,7 @@ class QuizActivity : AppCompatActivity() {
 
         FSTool(window).loadFunction()
 
-        bundle = intent.extras
+        bundle = intent.extras!!
         color = bundle.getInt("COLOR")
         colorDark = bundle.getInt("DARK")
         x = bundle.getInt("CHAP")

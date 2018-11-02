@@ -91,10 +91,10 @@ class ListCardActivity : AppCompatActivity() {
         dataNumber = ArrayList()
 
 
-        bundle = intent.extras
+        bundle = intent.extras!!
         color = bundle.getInt("COLOR")
         colorDark = bundle.getInt("DARK")
-        title = bundle.getString("TITLE")
+        title = bundle.getString("TITLE")!!
         id = bundle.getInt("ID")
 
 
@@ -228,7 +228,7 @@ class ListCardActivity : AppCompatActivity() {
 
             OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL)
 
-            adapterNumber = NumberAdapter(this, dataNumber, color, colorDark)
+            adapterNumber = NumberAdapter(this, dataNumber,ArrayList(), color, colorDark)
             recyclerView.setPadding(dpsToPixels(this, 30), dpsToPixels(this, 100), dpsToPixels(this, 10), 0)
             recyclerView.clipToPadding = false
 
@@ -240,7 +240,7 @@ class ListCardActivity : AppCompatActivity() {
             task.startLoad()
 
 
-            firebase.child("Lessons").child(key).child("Tests").addValueEventListener(object : ValueEventListener {
+            firebase.child("Lessons").child(key!!).child("Tests").addValueEventListener(object : ValueEventListener {
 
 
                 override fun onCancelled(p0: DatabaseError) {
@@ -285,10 +285,10 @@ class ListCardActivity : AppCompatActivity() {
             //dataLesson = Lesson().getChapter(position)
 
             var w = DeviceUtills(this).getScreenWidth()
-            var h = DeviceUtills(this).getScreenHeight()
+            val h = DeviceUtills(this).getScreenHeight()
             var ws = pixelsToDps(this, w)
 
-            var wss = (ws / 2) - 20 - 10
+            val wss = (ws / 2) - 20 - 10
 
             //var width = w/2 - dpsToPixels(this,40)
             //var height = (width/3)*4
@@ -310,7 +310,7 @@ class ListCardActivity : AppCompatActivity() {
             task.startLoad()
 
 
-            firebase.child("Lessons").child(key).child("Words").addValueEventListener(object : ValueEventListener {
+            firebase.child("Lessons").child(key!!).child("Words").addValueEventListener(object : ValueEventListener {
 
 
                 override fun onCancelled(p0: DatabaseError) {

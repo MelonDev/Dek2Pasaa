@@ -6,6 +6,7 @@ class ChapterCheck {
     var number :Int = -1
     var passed :Boolean = false
     var opened :Boolean = false
+    var key :String = ""
 
     constructor(number: Int,passed :Boolean,opened :Boolean){
         this.number = number

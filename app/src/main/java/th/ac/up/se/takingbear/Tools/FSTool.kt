@@ -5,7 +5,7 @@ import android.view.Window
 
 class FSTool {
 
-    lateinit var window :Window
+    var window :Window
 
     constructor(window: Window){
         this.window = window

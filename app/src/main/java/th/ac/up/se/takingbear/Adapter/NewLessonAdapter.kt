@@ -102,7 +102,27 @@ class NewLessonAdapter(val lang :String,var colorDark: Int, var color: Int, var 
                 putExtra("MSKEY",slot.masterKey)
                 putExtra("KEY",slot.key)
                 putExtra("DARK",colorDark)
+
+
+
             }
+
+            if(position > 0 && position < (data.size - 1)){
+                intent.putExtra("PRE",data[position - 1].key)
+                intent.putExtra("POST",data[position + 1].key)
+            }else if(position > 0 && position == (data.size - 1)){
+                intent.putExtra("PRE",data[position - 1].key)
+                intent.putExtra("POST","NULL")
+            } else if(position == 0 && position < (data.size - 1)){
+                intent.putExtra("PRE","NULL")
+                intent.putExtra("POST",data[position + 1].key)
+            }else {
+                intent.putExtra("PRE","NULL")
+                intent.putExtra("POST","NULL")
+
+
+            }
+
             //val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this.activity, holder.card_layout, "chapter_card")
             //context.startActivity(intent,options.toBundle())
 

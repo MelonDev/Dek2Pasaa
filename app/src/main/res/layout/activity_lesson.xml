@@ -167,6 +167,14 @@
                                         android:src="@drawable/ic_speaker"
                                         android:tint="#FFFFFF" />
 
+                                    <ProgressBar
+                                        android:id="@+id/lesson_thai_btn_progress"
+                                        android:layout_gravity="center"
+                                        android:layout_width="36dp"
+                                        android:layout_height="36dp"
+                                        android:theme="@style/Progress"
+                                        />
+
                                 </androidx.cardview.widget.CardView>
 
                             </RelativeLayout>
@@ -204,6 +212,14 @@
                                         android:layout_gravity="center"
                                         android:src="@drawable/ic_speaker"
                                         android:tint="#FFFFFF" />
+
+                                    <ProgressBar
+                                        android:id="@+id/lesson_eng_btn_progress"
+                                        android:layout_gravity="center"
+                                        android:layout_width="36dp"
+                                        android:layout_height="36dp"
+                                        android:theme="@style/Progress"
+                                        />
 
                                 </androidx.cardview.widget.CardView>
 
