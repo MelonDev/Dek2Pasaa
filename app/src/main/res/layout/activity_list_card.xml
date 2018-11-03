@@ -158,6 +158,75 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/list_loading_popup_layout"
+            android:background="#c8000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                app:cardBackgroundColor="@color/colorWhite"
+                android:layout_centerInParent="true"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                app:cardCornerRadius="30dp"
+                >
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="กำลังโหลด"
+                        android:fontFamily="@font/ts_np"
+                        android:textSize="50dp"
+                        android:layout_centerHorizontal="true"
+                        />
+                    <TextView
+                        android:id="@+id/list_loading_text"
+
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="กำลังโหลด"
+                        android:textColor="@color/facebookColor"
+                        android:fontFamily="@font/ts_som_np"
+                        android:textSize="50dp"
+                        android:layout_centerHorizontal="true"
+                        />
+
+
+                    <ProgressBar
+                        android:id="@+id/list_loading_progrss"
+                        android:layout_marginTop="100dp"
+                        android:src="@drawable/ic_lock"
+                        android:tint="@color/color_game_blue"
+                        android:layout_width="110dp"
+                        android:theme="@style/Facebook"
+                        android:layout_height="110dp"
+                        android:layout_centerHorizontal="true"
+                        />
+
+                </RelativeLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
 
 
     </RelativeLayout>

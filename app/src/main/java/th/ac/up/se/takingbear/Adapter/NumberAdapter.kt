@@ -14,6 +14,11 @@ import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_list_card.*
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
@@ -25,8 +30,10 @@ import th.ac.up.se.takingbear.R
 import th.ac.up.se.takingbear.SQLite.ChapterSQ
 import th.ac.up.se.takingbear.ViewHolder.NumberViewHolder
 import th.ac.up.se.thaicardgame.DataArray.Quiz
+import java.util.*
+import kotlin.collections.ArrayList
 
-class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<TestInfo>,var checkData :ArrayList<ChapterCheck>, var color: Int, var colorDark: Int) : RecyclerView.Adapter<NumberViewHolder>() {
+class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<TestInfo>, var checkData: ArrayList<ChapterCheck>, var color: Int, var colorDark: Int) : RecyclerView.Adapter<NumberViewHolder>() {
 
     lateinit var context: Context
     var weight: Int = 0
@@ -50,27 +57,271 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 
     override fun onBindViewHolder(holder: NumberViewHolder, position: Int) {
 
-        //holder.open()
+        holder.close()
 
+
+        val check = ArrayList<String>()
         checkData.forEach {
+            check.add(it.key)
+        }
 
-            if(it.key.contentEquals(data[position].key)){
+        val bool: Boolean = data[position].key in check
+
+        //Log.e("SS $position",data[position].key.toString())
 
 
+        if (position == 0) {
+
+            //Log.e("0","0")
+
+            if (bool) {
+                val it = checkData[check.indexOf(data[position].key)]
                 if (it.passed) {
-                    holder.star()
+                    holder.star(position)
+                    //Log.e("0","1")
+
                 } else if (it.opened) {
-                    holder.open()
+                    holder.open(position)
+                    //Log.e("0","2")
+
                 } else {
                     holder.close()
+                    //Log.e("0","3")
+
                 }
+            } else {
+                holder.open(position)
+                //Log.e("0","4")
 
             }
+
+        } else {
+
+            //Log.e(position.toString(),"0")
+
+
+            val lastBool: Boolean = data[position - 1].key in check
+
+            if (bool){
+                val it = checkData[check.indexOf(data[position].key)]
+                if (it.passed) {
+                    holder.star(position)
+                    //Log.e(position.toString(),"1")
+
+                } else if (it.opened) {
+                    holder.open(position)
+                    //Log.e(position.toString(),"2")
+
+                } else {
+                    holder.close()
+                    //Log.e(position.toString(),"3")
+
+                }
+            }else if(lastBool) {
+                holder.open(position)
+                //Log.e(position.toString(),"4")
+
+            }else {
+                holder.close()
+                //Log.e(position.toString(),"5")
+
+            }
+
 
         }
 
 
 
+
+
+        /*
+
+        val a = Arrays.asList(data)
+
+
+        val b = ArrayList<String>()
+        checkData.forEach {
+            b.add(it.key)
+        }
+
+        holder.close()
+
+        val bool: Boolean = data[position].key in b
+        var bool2: Boolean = false
+
+        var statusOpen = false
+
+        if (data.size > 1) {
+            if (position > 0) {
+                bool2 = data[position - 1].key in b
+
+                if (bool) {
+                    val it = checkData[b.indexOf(data[position].key)]
+                    if (it.passed) {
+                        holder.star()
+                        statusOpen = true
+                    } else if (it.opened) {
+                        holder.open()
+                        statusOpen = true
+
+                    } else {
+                        holder.close()
+                        statusOpen = false
+
+
+                    }
+                } else {
+                    if (bool2) {
+                        holder.open()
+                        statusOpen = true
+
+                    } else {
+                        holder.close()
+                        statusOpen = false
+
+                    }
+                }
+
+            } else {
+                if (bool) {
+                    val it = checkData[b.indexOf(data[position].key)]
+                    if (it.passed) {
+                        holder.star()
+                        statusOpen = true
+
+                    } else if (it.opened) {
+                        holder.open()
+                        statusOpen = true
+
+                    } else {
+                        holder.close()
+                        statusOpen = false
+                    }
+
+                } else {
+                    holder.open()
+                    statusOpen = true
+
+
+                }
+            }
+        } else if (data.size == 1) {
+            if (bool) {
+                val it = checkData[b.indexOf(data[position].key)]
+                if (it.passed) {
+                    holder.star()
+                    statusOpen = true
+
+                } else if (it.opened) {
+                    holder.open()
+                    statusOpen = true
+
+                } else {
+                    holder.close()
+                    statusOpen = false
+
+                }
+            } else {
+                holder.open()
+                statusOpen = true
+
+            }
+        }
+
+        holder.card.setOnClickListener {
+            if (statusOpen) {
+                notLock(position)
+            }else {
+                locked()
+            }
+        }
+
+
+        Log.e(position.toString(), bool.toString())
+
+*/
+
+        /*
+        var c = 0
+        if (checkData.size > 0) {
+
+            checkData.forEach {
+                c += 1
+
+                if (it.key.contentEquals(data[position].key)) {
+                    if (it.passed) {
+                        holder.star()
+
+                    } else if (it.opened) {
+                        holder.open()
+
+                    } else {
+                        holder.close()
+
+                    }
+
+                    if (c < data.size - 1) {
+                        checkData.forEach {
+                            if (!it.key.contentEquals(data[position + 1].key)) {
+                                    holder.open()
+
+                            }
+
+                        }
+                    }
+
+                }
+
+
+                /*
+                if (it.key.contentEquals(data[position].key)) {
+
+
+                    if (it.passed) {
+                        holder.star()
+                    } else if (it.opened) {
+                        holder.open()
+                    } else {
+                        holder.close()
+                    }
+
+                } else {
+
+                    if (position == 0) {
+                        holder.open()
+                    } else {
+                        holder.close()
+                    }
+                }
+                */
+
+            }
+        } else {
+            if (position == 0) {
+                holder.open()
+
+                holder.card.setOnClickListener {
+
+                    notLock(0)
+
+                }
+
+                //Log.e(position.toString(), "OPEN")
+
+            } else {
+                holder.close()
+
+                //Log.e(position.toString(), "CLOSE")
+
+                holder.card.setOnClickListener {
+
+                    locked()
+
+                }
+
+            }
+        }
+*/
 
         /*
         if(position <= 3){
@@ -90,9 +341,6 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 
         }
         */
-
-
-
 
 
         //ชั่วคราว
@@ -142,8 +390,6 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 */
 
 
-
-
         //holder.nameA.text = (position+1).toString()
         holder.nameB.text = (position + 1).toString()
 
@@ -179,20 +425,68 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 
     }
 
-    private fun NumberViewHolder.star() {
+    private fun locked() {
+
+        fragmentActivity.apply {
+
+            var sqlite = LangSQ(this)
+            if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                this.list_popup_title_b.text = "ข้อนี้ล็อคอยู่"
+                this.list_popup_text_btn.text = "รับทราบ"
+            } else {
+                this.list_popup_title_b.text = "Locked"
+                this.list_popup_text_btn.text = "OK"
+            }
+
+            this.list_popup_layout.visibility = View.VISIBLE
+
+            this.list_popup_text_btn.setOnClickListener {
+                this.list_popup_layout.visibility = View.GONE
+            }
+
+        }
+    }
+
+    private fun notLock(position: Int) {
+        var intent = Intent(context, QuizActivity::class.java)
+        val d = data[position]
+        intent.apply {
+            putExtra("COLOR", color)
+            //putExtra("CHAP", chapter)
+            putExtra("MSKEY", d.masterKey)
+            putExtra("KEY", d.key)
+            putExtra("POSITION", position)
+            putExtra("DARK", colorDark)
+        }
+        context.startActivity(intent)
+    }
+
+    private fun NumberViewHolder.star(position: Int) {
         this.star.visibility = View.VISIBLE
         this.nameB.setPadding(0, dpsToPixels(30), dpsToPixels(10), dpsToPixels(0))
         this.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
         //holder.nameB.setTextColor(ContextCompat.getColor(context,R.color.colorText))
         this.nameB.setTextColor(ContextCompat.getColor(context, colorDark))
+
+        this.card.setOnClickListener {
+
+            notLock(position)
+
+        }
     }
 
-    private fun NumberViewHolder.open() {
+    private fun NumberViewHolder.open(position: Int) {
 
         this.star.visibility = View.GONE
         this.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
         //holder.nameB.setTextColor(ContextCompat.getColor(context,R.color.colorText))
         this.nameB.setTextColor(ContextCompat.getColor(context, colorDark))
+
+        this.card.setOnClickListener {
+
+            notLock(position)
+
+        }
 
     }
 
@@ -200,6 +494,12 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
         this.card.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
         //holder.nameB.setTextColor(ContextCompat.getColor(context,R.color.colorWhite))
         this.star.visibility = View.GONE
+
+        this.card.setOnClickListener {
+
+            locked()
+
+        }
     }
 
     private fun pixelsToDps(context: Context, pixels: Int): Int {

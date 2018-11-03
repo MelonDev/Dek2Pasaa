@@ -2,6 +2,8 @@ package th.ac.up.se.takingbear
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -9,8 +11,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.mylhyl.circledialog.CircleDialog
+import com.mylhyl.circledialog.callback.ConfigDialog
+import com.mylhyl.circledialog.params.DialogParams
+import com.mylhyl.circledialog.params.ProgressParams
 
 import kotlinx.android.synthetic.main.activity_list_card.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -37,6 +45,9 @@ class ListCardActivity : AppCompatActivity() {
     var title: String = ""
     var id: Int = -1
     var colorDark: Int = 0
+
+    private lateinit var waitDialog: DialogFragment
+
 
     private lateinit var dataChapter: ArrayList<Chapter>
     private lateinit var dataCheck: ArrayList<ChapterCheck>
@@ -67,6 +78,10 @@ class ListCardActivity : AppCompatActivity() {
     }
 
     fun selector(p: WordInfo): Int {
+        return p.number
+    }
+
+    fun selector(p: ChapterCheck): Int {
         return p.number
     }
 
@@ -114,14 +129,26 @@ class ListCardActivity : AppCompatActivity() {
 
 
     override fun onStart() {
+
+
         super.onStart()
 
+        stopProgress()
         fullScreen.loadFunction()
+
 
         recy()
 
 
     }
+
+    override fun onRestart() {
+        super.onRestart()
+
+        fullScreen.loadFunction()
+
+    }
+
 
     fun recy() {
 
@@ -158,6 +185,9 @@ class ListCardActivity : AppCompatActivity() {
 
             task.startLoad()
 
+            //showWaitDialog()
+            showProgress()
+
 
             firebase.child("Lessons").addValueEventListener(object : ValueEventListener {
 
@@ -180,6 +210,7 @@ class ListCardActivity : AppCompatActivity() {
 
                     } else {
                         dataChapter.clear()
+                        stopProgress()
                     }
                 }
             })
@@ -228,7 +259,7 @@ class ListCardActivity : AppCompatActivity() {
 
             OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL)
 
-            adapterNumber = NumberAdapter(this, dataNumber,ArrayList(), color, colorDark)
+            adapterNumber = NumberAdapter(this, dataNumber, dataCheck, color, colorDark)
             recyclerView.setPadding(dpsToPixels(this, 30), dpsToPixels(this, 100), dpsToPixels(this, 10), 0)
             recyclerView.clipToPadding = false
 
@@ -238,6 +269,8 @@ class ListCardActivity : AppCompatActivity() {
 
 
             task.startLoad()
+
+            showProgress()
 
 
             firebase.child("Lessons").child(key!!).child("Tests").addValueEventListener(object : ValueEventListener {
@@ -261,6 +294,7 @@ class ListCardActivity : AppCompatActivity() {
 
                     } else {
                         dataNumber.clear()
+                        stopProgress()
                     }
                 }
             })
@@ -309,31 +343,49 @@ class ListCardActivity : AppCompatActivity() {
 
             task.startLoad()
 
+            showProgress()
 
-            firebase.child("Lessons").child(key!!).child("Words").addValueEventListener(object : ValueEventListener {
+            val uk = FirebaseAuth.getInstance().currentUser!!.uid
 
-
+            firebase.child("Peoples").child(uk).child("History").addValueEventListener(object : ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {
-                    Log.e("", "")
+                    Log.e("","")
                 }
 
-                override fun onDataChange(p0: DataSnapshot) {
-                    if (p0.value != null) {
+                override fun onDataChange(p2: DataSnapshot) {
+                    if(p2.value != null){
 
 
-                        if (task.isInActive()) {
-                            task.activeNow()
-                            WordLoadData(p0)
-                        } else {
-                            task.overActive(p0)
-                        }
+                        firebase.child("Lessons").child(key!!).child("Words").addListenerForSingleValueEvent(object : ValueEventListener {
 
 
-                    } else {
-                        dataLesson.clear()
+                            override fun onCancelled(p0: DatabaseError) {
+                                Log.e("", "")
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+                                if (p0.value != null) {
+
+
+                                    if (task.isInActive()) {
+                                        task.activeNow()
+                                        WordLoadData(p0)
+                                    } else {
+                                        task.overActive(p0)
+                                    }
+
+
+                                } else {
+                                    dataLesson.clear()
+                                    stopProgress()
+                                }
+                            }
+                        })
                     }
                 }
             })
+
+
 
 
         }
@@ -350,6 +402,7 @@ class ListCardActivity : AppCompatActivity() {
     }
 
     private fun ChapterLoadData(dataSnapshot: DataSnapshot) {
+
 
         var count = 0
 
@@ -413,10 +466,15 @@ class ListCardActivity : AppCompatActivity() {
                             if (p != null) {
                                 //Log.e("TEST","TEST")
                                 ChapterLoadData(it!!)
+                            } else {
+                                //stopWaitDialog()
+                                stopProgress()
                             }
 
                         }
 
+                    } else {
+                        stopProgress()
                     }
                 }
             })
@@ -435,12 +493,15 @@ class ListCardActivity : AppCompatActivity() {
 
         //Log.e("SIZE",dataSnapshot.children.count().toString())
 
+        //Log.e("D",dataSnapshot.children.count().toString())
 
         dataSnapshot.children.forEach {
 
-            val key = it.key.toString()
-            //Log.e("KEY",key)
+            val slot = it.getValue(TestInfo::class.java)!!
 
+            val key = slot.key
+            val mkey = slot.masterKey
+            //Log.e("KEY",mkey)
 
             count += 1
 
@@ -468,15 +529,89 @@ class ListCardActivity : AppCompatActivity() {
 
             adapterNumber.notifyDataSetChanged()
 
+            //Log.e("KEY2 : ${count}","TESTs " + slot.masterKey)
+
 
             if (count == dataSnapshot.children.count()) {
 
-                val p = task.loadOverActive()
+                //Log.e("KEY3","TEST" + slot.masterKey)
+                val uk = FirebaseAuth.getInstance().currentUser!!.uid
+                //Log.e("UK",uk)
 
-                if (p != null) {
-                    //Log.e("TEST","TEST")
-                    QuizLoadData(it!!)
-                }
+                val a = FirebaseDatabase.getInstance().reference.child("Peoples").child(uk).child("History").child(mkey)
+
+                //Log.e("RES ${mkey}",a.ref.toString())
+
+                a.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                    override fun onCancelled(p0: DatabaseError) {
+                        Log.e("", "")
+                    }
+
+                    override fun onDataChange(p1: DataSnapshot) {
+                        if (p1.value != null) {
+
+
+                            var c = 0
+
+                            dataCheck.clear()
+
+                            Log.e("DSA", p1.children.count().toString())
+
+                            p1.children.forEach { itP1 ->
+
+
+                                val slot = itP1.getValue(CheckTest::class.java)!!
+
+                                Log.e("DSAMM ${itP1.key} : ${p1.key}", "T ${slot.key}")
+
+
+                                val s = ChapterCheck(0, slot.passed, slot.passed)
+                                s.key = slot.key
+
+                                dataCheck.add(s)
+
+                                c += 1
+
+                                if (c == p1.children.count()) {
+                                    adapterNumber.notifyDataSetChanged()
+
+                                    val p = task.loadOverActive()
+
+                                    Log.e("DSAX", dataCheck.size.toString())
+
+
+                                    if (p != null) {
+                                        //Log.e("TEST","TEST")
+                                        QuizLoadData(itP1!!)
+                                    } else {
+                                        //stopWaitDialog()
+                                        stopProgress()
+                                    }
+
+                                }
+                            }
+
+
+                        } else {
+                            dataCheck.clear()
+                            adapterNumber.notifyDataSetChanged()
+
+                            val p = task.loadOverActive()
+
+                            if (p != null) {
+                                //Log.e("TEST","TEST")
+                                QuizLoadData(it!!)
+                            } else {
+                                //stopWaitDialog()
+                                stopProgress()
+                            }
+                        }
+
+
+                    }
+                })
+
 
             }
 
@@ -537,6 +672,9 @@ class ListCardActivity : AppCompatActivity() {
                 if (p != null) {
                     //Log.e("TEST","TEST")
                     WordLoadData(it!!)
+                } else {
+                    //stopWaitDialog()
+                    stopProgress()
                 }
 
             }
@@ -558,5 +696,32 @@ class ListCardActivity : AppCompatActivity() {
         return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dps.toFloat(), r.displayMetrics).toInt()
     }
+
+    fun showWaitDialog() {
+        waitDialog = CircleDialog.Builder()
+                .configDialog { params -> params.canceledOnTouchOutside = false }
+                .setProgressText("กำลังโหลด...")
+                .setProgressStyle(ProgressParams.STYLE_SPINNER)
+                .show(supportFragmentManager)
+
+    }
+
+    fun stopWaitDialog() {
+        waitDialog.dismiss()
+    }
+
+    fun showProgress() {
+        list_loading_popup_layout.visibility = View.VISIBLE
+
+        //Log.e("COLOR",Color.RED.toString())
+
+        //list_loading_text.setTextColor(ContextCompat.getColor(this,color))
+    }
+
+    fun stopProgress() {
+        list_loading_popup_layout.visibility = View.GONE
+
+    }
+
 
 }
