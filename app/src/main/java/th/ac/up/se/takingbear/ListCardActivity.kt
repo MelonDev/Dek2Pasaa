@@ -19,6 +19,7 @@ import com.mylhyl.circledialog.CircleDialog
 import com.mylhyl.circledialog.callback.ConfigDialog
 import com.mylhyl.circledialog.params.DialogParams
 import com.mylhyl.circledialog.params.ProgressParams
+import com.up.se.tkbcontrol.Data.PeopleInfo
 
 import kotlinx.android.synthetic.main.activity_list_card.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -45,6 +46,9 @@ class ListCardActivity : AppCompatActivity() {
     var title: String = ""
     var id: Int = -1
     var colorDark: Int = 0
+
+    lateinit var sq: LangSQ
+
 
     private lateinit var waitDialog: DialogFragment
 
@@ -89,6 +93,8 @@ class ListCardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_card)
+        sq = LangSQ(this)
+
 
         fullScreen = FSTool(this.window)
         //supportPostponeEnterTransition()
@@ -122,8 +128,68 @@ class ListCardActivity : AppCompatActivity() {
             finish()
         }
 
+        score_card.setCardBackgroundColor(ContextCompat.getColor(this,colorDark))
+
         list_popup_layout.visibility = View.GONE
 
+        val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+
+        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").addValueEventListener(object :ValueEventListener{
+
+            override fun onCancelled(p0: DatabaseError) {
+                Log.e("","")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.value != null){
+
+                    /*
+                    val profile = p0.getValue(PeopleInfo::class.java)!!
+
+                    if (sq.read().contentEquals(LangSQ.THAI)) {
+                        score_text.text = "คะแนนของฉัน: ${profile.score}"
+                    } else {
+                        score_text.text = "My score: ${profile.score}"
+                    }
+                    */
+
+                    var score = 0
+
+                    var count = 0
+
+                    p0.children.forEach {
+
+                        val a = it.key.toString()
+                        count += 1
+
+                        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(a).addListenerForSingleValueEvent(object : ValueEventListener{
+                            override fun onCancelled(p0: DatabaseError) {
+                                Log.e("","")
+                            }
+
+                            override fun onDataChange(p1: DataSnapshot) {
+                                if(p1.value != null){
+                                    score += p1.children.count()
+
+                                    if(count == p0.children.count()){
+                                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                                            score_text.text = "คะแนนของฉัน: ${score}"
+                                        } else {
+                                            score_text.text = "My score: ${score}"
+                                        }
+                                    }
+                                }
+                            }
+                        })
+
+                    }
+
+                } else {
+                    score_text.text = "คะแนนของฉัน: 0"
+
+                }
+            }
+        })
 
     }
 
@@ -272,33 +338,49 @@ class ListCardActivity : AppCompatActivity() {
 
             showProgress()
 
+            val uk = FirebaseAuth.getInstance().currentUser!!.uid
 
-            firebase.child("Lessons").child(key!!).child("Tests").addValueEventListener(object : ValueEventListener {
-
-
+            /*
+            FirebaseDatabase.getInstance().reference.child("Peoples").child(uk).child("History").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                     Log.e("", "")
                 }
 
-                override fun onDataChange(p0: DataSnapshot) {
-                    if (p0.value != null) {
+                override fun onDataChange(p2: DataSnapshot) {
+                    if (p2.value != null) {
+*/
+                        firebase.child("Lessons").child(key!!).child("Tests").addListenerForSingleValueEvent(object : ValueEventListener {
 
 
-                        if (task.isInActive()) {
-                            task.activeNow()
-                            QuizLoadData(p0)
-                        } else {
-                            task.overActive(p0)
-                        }
+                            override fun onCancelled(p0: DatabaseError) {
+                                Log.e("", "")
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+                                if (p0.value != null) {
 
 
-                    } else {
-                        dataNumber.clear()
-                        stopProgress()
+                                    if (task.isInActive()) {
+                                        task.activeNow()
+                                        QuizLoadData(p0)
+                                    } else {
+                                        task.overActive(p0)
+                                    }
+
+
+                                } else {
+                                    dataNumber.clear()
+                                    stopProgress()
+                                }
+                            }
+                        })
+
+/*
                     }
                 }
             })
 
+*/
             //recyclerView.adapter = adapter
         } else if (id == 101) {
             //Log.e("COLOR",colorDark.toString())
@@ -345,47 +427,34 @@ class ListCardActivity : AppCompatActivity() {
 
             showProgress()
 
-            val uk = FirebaseAuth.getInstance().currentUser!!.uid
 
-            firebase.child("Peoples").child(uk).child("History").addValueEventListener(object : ValueEventListener{
+
+
+            firebase.child("Lessons").child(key!!).child("Words").addValueEventListener(object : ValueEventListener {
+
+
                 override fun onCancelled(p0: DatabaseError) {
-                    Log.e("","")
+                    Log.e("", "")
                 }
 
-                override fun onDataChange(p2: DataSnapshot) {
-                    if(p2.value != null){
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.value != null) {
 
 
-                        firebase.child("Lessons").child(key!!).child("Words").addListenerForSingleValueEvent(object : ValueEventListener {
+                        if (task.isInActive()) {
+                            task.activeNow()
+                            WordLoadData(p0)
+                        } else {
+                            task.overActive(p0)
+                        }
 
 
-                            override fun onCancelled(p0: DatabaseError) {
-                                Log.e("", "")
-                            }
-
-                            override fun onDataChange(p0: DataSnapshot) {
-                                if (p0.value != null) {
-
-
-                                    if (task.isInActive()) {
-                                        task.activeNow()
-                                        WordLoadData(p0)
-                                    } else {
-                                        task.overActive(p0)
-                                    }
-
-
-                                } else {
-                                    dataLesson.clear()
-                                    stopProgress()
-                                }
-                            }
-                        })
+                    } else {
+                        dataLesson.clear()
+                        stopProgress()
                     }
                 }
             })
-
-
 
 
         }
@@ -497,6 +566,7 @@ class ListCardActivity : AppCompatActivity() {
 
         dataSnapshot.children.forEach {
 
+
             val slot = it.getValue(TestInfo::class.java)!!
 
             val key = slot.key
@@ -556,14 +626,14 @@ class ListCardActivity : AppCompatActivity() {
 
                             dataCheck.clear()
 
-                            Log.e("DSA", p1.children.count().toString())
+                            //Log.e("DSA", p1.children.count().toString())
 
                             p1.children.forEach { itP1 ->
 
 
                                 val slot = itP1.getValue(CheckTest::class.java)!!
 
-                                Log.e("DSAMM ${itP1.key} : ${p1.key}", "T ${slot.key}")
+                                //Log.e("DSAMM ${itP1.key} : ${p1.key}", "T ${slot.key}")
 
 
                                 val s = ChapterCheck(0, slot.passed, slot.passed)
@@ -578,7 +648,7 @@ class ListCardActivity : AppCompatActivity() {
 
                                     val p = task.loadOverActive()
 
-                                    Log.e("DSAX", dataCheck.size.toString())
+                                    //Log.e("DSAX", dataCheck.size.toString())
 
 
                                     if (p != null) {
@@ -712,6 +782,13 @@ class ListCardActivity : AppCompatActivity() {
 
     fun showProgress() {
         list_loading_popup_layout.visibility = View.VISIBLE
+        list_loading_text
+
+        if (sq.read().contentEquals(LangSQ.THAI)) {
+            list_loading_text.text = "กำลังโหลด"
+        } else {
+            list_loading_text.text = "Loading"
+        }
 
         //Log.e("COLOR",Color.RED.toString())
 

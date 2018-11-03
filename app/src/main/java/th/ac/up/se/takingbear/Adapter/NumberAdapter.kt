@@ -100,32 +100,62 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
             //Log.e(position.toString(),"0")
 
 
-            val lastBool: Boolean = data[position - 1].key in check
+            var co = position - 1
+            var lock = false
 
-            if (bool){
-                val it = checkData[check.indexOf(data[position].key)]
-                if (it.passed) {
-                    holder.star(position)
-                    //Log.e(position.toString(),"1")
+            while (co >= 0){
 
-                } else if (it.opened) {
-                    holder.open(position)
-                    //Log.e(position.toString(),"2")
+                val coBool: Boolean = data[co].key in check
 
-                } else {
-                    holder.close()
-                    //Log.e(position.toString(),"3")
+                if(!coBool){
+                    lock = true
+                }
+
+                if(co == 0){
+
+                    if(lock){
+                        holder.close()
+
+                    }else {
+                        val lastBool: Boolean = data[position - 1].key in check
+
+                        if (bool){
+                            val it = checkData[check.indexOf(data[position].key)]
+                            if (it.passed) {
+                                holder.star(position)
+                                //Log.e(position.toString(),"1")
+
+                            } else if (it.opened) {
+                                holder.open(position)
+                                //Log.e(position.toString(),"2")
+
+                            } else {
+                                holder.close()
+                                //Log.e(position.toString(),"3")
+
+                            }
+                        }else if(lastBool) {
+                            holder.open(position)
+                            //Log.e(position.toString(),"4")
+
+                        }else {
+                            holder.close()
+                            //Log.e(position.toString(),"5")
+
+                        }
+                    }
+
+
 
                 }
-            }else if(lastBool) {
-                holder.open(position)
-                //Log.e(position.toString(),"4")
 
-            }else {
-                holder.close()
-                //Log.e(position.toString(),"5")
+                co -= 1
+
 
             }
+
+
+
 
 
         }
@@ -463,7 +493,7 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
 
     private fun NumberViewHolder.star(position: Int) {
         this.star.visibility = View.VISIBLE
-        this.nameB.setPadding(0, dpsToPixels(30), dpsToPixels(10), dpsToPixels(0))
+        this.nameB.setPadding(0, dpsToPixels(30), dpsToPixels(10), dpsToPixels(20))
         this.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
         //holder.nameB.setTextColor(ContextCompat.getColor(context,R.color.colorText))
         this.nameB.setTextColor(ContextCompat.getColor(context, colorDark))
@@ -481,6 +511,7 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
         this.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
         //holder.nameB.setTextColor(ContextCompat.getColor(context,R.color.colorText))
         this.nameB.setTextColor(ContextCompat.getColor(context, colorDark))
+        this.nameB.setPadding(0, dpsToPixels(0), dpsToPixels(10), dpsToPixels(20))
 
         this.card.setOnClickListener {
 
@@ -493,6 +524,9 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
     private fun NumberViewHolder.close() {
         this.card.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
         //holder.nameB.setTextColor(ContextCompat.getColor(context,R.color.colorWhite))
+        this.nameB.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
+        this.nameB.setPadding(0, dpsToPixels(0), dpsToPixels(10), dpsToPixels(0))
+
         this.star.visibility = View.GONE
 
         this.card.setOnClickListener {

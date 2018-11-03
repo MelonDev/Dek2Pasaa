@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import com.up.se.tkbcontrol.Data.PeopleInfo
 
 import kotlinx.android.synthetic.main.activity_quiz.*
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
@@ -104,6 +105,9 @@ class QuizActivity : AppCompatActivity() {
                         if (count == p0.children.count()) {
 
                             data.sortBy { selector(it) }
+
+                            Log.e("NAME","M ${data[position].key}")
+
                             cardToAny(data[position])
 
                         }
@@ -156,10 +160,14 @@ class QuizActivity : AppCompatActivity() {
 
         quiz_choice_a.setOnClickListener {
             if (card.answer == 0) {
+                showWaiting()
                 if (position == data.size - 1) {
-                    finishPopup()
+                    //finishPopup()
+                    addScore(1)
                 } else {
-                    passPopup()
+                    //passPopup()
+                    addScore(0)
+
                 }
             } else {
                 failPopup()
@@ -169,10 +177,14 @@ class QuizActivity : AppCompatActivity() {
 
         quiz_choice_b.setOnClickListener {
             if (card.answer == 1) {
+                showWaiting()
                 if (position == data.size - 1) {
-                    finishPopup()
+                    //finishPopup()
+                    addScore(1)
                 } else {
-                    passPopup()
+                    //passPopup()
+                    addScore(0)
+
                 }
             } else {
                 failPopup()
@@ -256,6 +268,7 @@ class QuizActivity : AppCompatActivity() {
                 popup(2, "Congratulations", R.drawable.trophy, R.color.colorAmber, "OK")
 
             }
+
         }
 
 
@@ -263,15 +276,58 @@ class QuizActivity : AppCompatActivity() {
 
     }
 
+    private fun addScore(id :Int){
+        val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+
+        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("Info").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                Log.e("","")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.value != null){
+
+                    /*
+                    val profile = p0.getValue(PeopleInfo::class.java)!!
+
+                    profile.score = profile.score + 1
+
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("Info").setValue(profile).addOnSuccessListener {
+                        if(id == 0){
+                            passPopup()
+                        }else if(id == 1){
+                            finishPopup()
+                        }
+                    }
+                    */
+
+                    if(id == 0){
+                        passPopup()
+                    }else if(id == 1){
+                        finishPopup()
+                    }
+
+                }
+            }
+        })
+    }
+
 
     private fun popup(id: Int, title: String, image: Int, color: Int, button: String) {
+        stopWaiting()
+
         quiz_popup_layout.visibility = View.VISIBLE
         //Picasso.get().load(image).into(quiz_popup_image)
         quiz_popup_image.setImageDrawable(ContextCompat.getDrawable(this, image))
 
+        /*
         if (id != 2) {
             quiz_popup_image.setColorFilter(ContextCompat.getColor(this, color), android.graphics.PorterDuff.Mode.SRC_IN)
         }
+        */
+
+        quiz_popup_image.setColorFilter(ContextCompat.getColor(this, color), android.graphics.PorterDuff.Mode.SRC_IN)
+
 
         quiz_popup_title_a.text = title
         quiz_popup_title_b.text = title
@@ -301,6 +357,19 @@ class QuizActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun showWaiting(){
+        if (sq.read().contentEquals(LangSQ.THAI)) {
+            quiz_loading_text.text = "กำลังตรวจ"
+        } else {
+            quiz_loading_text.text = "Checking answers"
+        }
+        quiz_loading_popup_layout.visibility = View.VISIBLE
+    }
+
+    private fun stopWaiting(){
+        quiz_loading_popup_layout.visibility = View.GONE
     }
 
 
