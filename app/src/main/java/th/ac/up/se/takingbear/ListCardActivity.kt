@@ -185,8 +185,11 @@ class ListCardActivity : AppCompatActivity() {
                     }
 
                 } else {
-                    score_text.text = "คะแนนของฉัน: 0"
-
+                    if (sq.read().contentEquals(LangSQ.THAI)) {
+                        score_text.text = "คะแนนของฉัน: 0"
+                    } else {
+                        score_text.text = "My score: 0"
+                    }
                 }
             }
         })
