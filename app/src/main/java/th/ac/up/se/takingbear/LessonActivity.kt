@@ -14,9 +14,14 @@ import android.text.style.RelativeSizeSpan
 import android.view.View
 import com.squareup.picasso.Picasso
 import android.R.raw
+import android.app.Activity
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -51,7 +56,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class LessonActivity : AppCompatActivity() {
+class LessonActivity : AppCompatActivity(){
 
     private lateinit var bundle: Bundle
     private var color: Int = 0
@@ -84,6 +89,9 @@ class LessonActivity : AppCompatActivity() {
 
     lateinit var sqlite: LangSQ
 
+    var thai :String = ""
+    var eng :String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lesson)
@@ -104,6 +112,9 @@ class LessonActivity : AppCompatActivity() {
         //Log.e("KEY",key)
 
         dataWord = ArrayList()
+
+        lesson_popup_layout.visibility = View.GONE
+
 
         //position = y
 
@@ -139,6 +150,14 @@ class LessonActivity : AppCompatActivity() {
 
         //cardToAny(card)
 
+
+        lesson_eng_mic_btn.setOnClickListener {
+            callVoiceRecognition()
+        }
+
+        lesson_thai_mic_btn.setOnClickListener {
+            callThaiVoiceRecognition()
+        }
 
         lesson_forward_btn.setOnClickListener {
             takePost()
@@ -336,6 +355,9 @@ class LessonActivity : AppCompatActivity() {
         var sB = SpannableStringBuilder()
         var sC = SpannableStringBuilder()
 
+        thai = card.nameThai
+        eng = card.nameEng
+
         if (sqlite.read().contentEquals(LangSQ.THAI)) {
 
             lesson_backward_text.text = "ก่อนหน้า"
@@ -475,7 +497,7 @@ class LessonActivity : AppCompatActivity() {
     }
 
     private fun spacialText(smallText: String, largeText: String): SpannableStringBuilder {
-        val a = "$smallText$largeText"
+        val a = "$smallText\n$largeText"
         val sA = SpannableStringBuilder(a)
         sA.apply {
             addSpan(a, smallText, 0.7)
@@ -500,6 +522,178 @@ class LessonActivity : AppCompatActivity() {
 
         return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dps.toFloat(), r.displayMetrics).toInt()
+    }
+
+    companion object {
+        const val REQUEST_CODE_VOICE_RECOGNITION = 1001
+        const val REQUEST_CODE_THAI_VOICE_RECOGNITION = 1002
+
+    }
+
+    private fun callVoiceRecognition() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "th-TH")
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US")
+        startActivityForResult(intent, REQUEST_CODE_VOICE_RECOGNITION)
+    }
+
+    private fun callThaiVoiceRecognition() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "th-TH")
+        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US")
+        startActivityForResult(intent, REQUEST_CODE_THAI_VOICE_RECOGNITION)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_VOICE_RECOGNITION && resultCode == Activity.RESULT_OK) {
+            val resultList = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+
+            val result = resultList!![0]
+            showPopup(2,result)
+
+
+        }else if(requestCode == REQUEST_CODE_THAI_VOICE_RECOGNITION && resultCode == Activity.RESULT_OK){
+            val resultList = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+
+            val result = resultList!![0]
+            showPopup(1,result)
+
+
+        }
+    }
+
+    fun showPopup(id :Int,result :String){
+        lesson_popup_layout.visibility = View.VISIBLE
+        //Picasso.get().load(image).into(quiz_popup_image)
+        //lesson_popup_image.setImageDrawable(ContextCompat.getDrawable(this, image))
+
+        /*
+        if (id != 2) {
+            quiz_popup_image.setColorFilter(ContextCompat.getColor(this, color), android.graphics.PorterDuff.Mode.SRC_IN)
+        }
+        */
+
+
+
+        //lesson_popup_title_a.text = title
+        //lesson_popup_title_b.text = title
+
+
+        //lesson_popup_text_btn.text = button
+
+        /*
+        if (id == 1) {
+
+        } else if (id == 2) {
+
+        }
+        */
+
+        if (sqlite.read().contentEquals(LangSQ.THAI)) {
+            lesson_popup_text_btn.text = "ปิด"
+
+        } else {
+            lesson_popup_text_btn.text = "Close"
+
+        }
+
+        lesson_popup_title_c.text = result
+
+
+        if (id == 1) {
+
+
+            if(thai[thai.length - 1].equals('?')){
+                val x = thai
+                val y = x.substring(0,x.length - 1).toString()
+                val bool = result.contentEquals(y)
+                check(bool)
+
+            }else {
+                val bool = result.contentEquals(thai)
+
+                check(bool)
+            }
+
+
+
+
+
+        } else if (id == 2) {
+
+
+            if(eng[eng.length - 1].equals('?')){
+                val x = eng
+                val y = x.substring(0,x.length - 1).toString()
+                val a = y.toLowerCase()
+                val b = result.toLowerCase()
+                val bool = b.contentEquals(a)
+                check(bool)
+
+            }else {
+
+                val a = eng.toLowerCase()
+                val b = result.toLowerCase()
+                val bool = b.contentEquals(a)
+                check(bool)
+            }
+
+
+
+
+        }
+
+        //var sqlite = ChapterSQ(this, ChapterSQ.convertName(x), data.size)
+
+        lesson_popup_text_btn.setOnClickListener {
+            lesson_popup_layout.visibility = View.GONE
+        }
+    }
+
+    fun popupC(){
+        lesson_popup_image.setColorFilter(ContextCompat.getColor(this, R.color.color_game_blue), android.graphics.PorterDuff.Mode.SRC_IN)
+        lesson_popup_title_b.setTextColor(ContextCompat.getColor(this, R.color.color_game_blue))
+        //lesson_popup_image.setImageDrawable(ContextCompat.getDrawable(this, image))
+
+
+    }
+
+    fun popupInC(){
+        lesson_popup_image.setColorFilter(ContextCompat.getColor(this, color), android.graphics.PorterDuff.Mode.SRC_IN)
+        lesson_popup_title_b.setTextColor(ContextCompat.getColor(this, color))
+        //lesson_popup_image.setImageDrawable(ContextCompat.getDrawable(this, image))
+
+
+    }
+
+    fun check(bool:Boolean){
+        if (sqlite.read().contentEquals(LangSQ.THAI)) {
+            if(bool){
+                lesson_popup_title_b.text = "ถูกต้อง"
+                popupC()
+            }else{
+                lesson_popup_title_b.text = "ไม่ถูกต้อง"
+                popupInC()
+
+            }
+        } else {
+            if(bool){
+                lesson_popup_title_b.text = "Correct"
+                popupC()
+
+            }else{
+                lesson_popup_title_b.text = "Incorrect"
+                popupInC()
+
+            }
+        }
+    }
+
+
+    fun hidePopup(){
+
     }
 
 

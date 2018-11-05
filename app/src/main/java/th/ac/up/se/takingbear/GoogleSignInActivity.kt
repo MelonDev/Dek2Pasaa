@@ -104,6 +104,7 @@ class GoogleSignInActivity : AppCompatActivity() {
                         user.apply {
                             this.key = fa.uid
                             this.name = fa.displayName.toString()
+                            this.image = fa.photoUrl.toString()
                         }
 
                         FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").setValue(user).addOnSuccessListener {

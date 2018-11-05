@@ -12,6 +12,7 @@
     <string name="fb_login_protocol_scheme">fb321309408697404</string>
     <string name="title_activity_google_sign_in">GoogleSignInActivity</string>
     <string name="title_activity_new_google_sign_in">NewGoogleSignIn</string>
+    <string name="title_activity_setting">SettingActivity</string>
 
 
 </resources>

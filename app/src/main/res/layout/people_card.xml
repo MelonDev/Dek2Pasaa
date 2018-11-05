@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/chapter_card_main_layout"
+    android:id="@+id/people_card_main_layout"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
 
@@ -9,7 +9,7 @@
     >
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/chapter_card_layout"
+        android:id="@+id/people_card_layout"
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_marginLeft="0dp"
@@ -21,7 +21,7 @@
         app:cardElevation="0dp">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/chapter_card_layout_second"
+            android:id="@+id/people_card_layout_second"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="7dp"
@@ -34,18 +34,29 @@
                 android:layout_height="match_parent">
 
 
+
                 <ImageView
-                    android:id="@+id/chapter_card_image"
+                    android:id="@+id/people_card_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop" />
 
                 <ImageView
-                    android:id="@+id/chapter_card_overlay"
+                    android:id="@+id/people_card_overlay"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/people_top_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/trophy"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -53,20 +64,19 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="64dp">
 
                     <TextView
-                        android:id="@+id/chapter_card_name_A"
+                        android:id="@+id/people_card_name_A"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/ts_np"
                         android:minWidth="150dp"
                         android:text="ชื่อ"
-
                         android:textSize="52dp" />
 
                     <TextView
-                        android:id="@+id/chapter_card_name_B"
+                        android:id="@+id/people_card_name_B"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/ts_som_np"
@@ -75,51 +85,24 @@
                         android:textColor="@color/colorWhite"
                         android:textSize="52dp" />
 
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:alpha="0.9"
-                    android:visibility="gone"
-                    android:id="@+id/chapter_paid_back"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#a1000000">
-
-                    <RelativeLayout
-                        android:id="@+id/chapter_paid_label"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:background="#FFFFFF">
-
-                        <RelativeLayout
-                            android:id="@+id/chapter_paid_label_inside"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="7dp"
-                            android:background="#FFFFFF">
-
-
-                            <TextView
-                                android:id="@+id/chapter_paid_price"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:fontFamily="@font/ts_som_np"
-                                android:gravity="center"
-                                android:paddingTop="20dp"
-                                android:paddingBottom="20dp"
-                                android:text="ชื่อ"
-                                android:textColor="@color/colorWhite"
-                                android:textSize="52dp" />
-                        </RelativeLayout>
-
-                    </RelativeLayout>
 
 
                 </RelativeLayout>
+
+                <TextView
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/people_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/ts_som_np"
+                    android:minWidth="150dp"
+                    android:text="คะแนน"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="42dp" />
+
 
             </RelativeLayout>
 

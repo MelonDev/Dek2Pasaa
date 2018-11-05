@@ -14,4 +14,8 @@ class ChapterViewHolder(itemView :View) : RecyclerView.ViewHolder(itemView){
     var main = itemView.chapter_card_main_layout
     var second = itemView.chapter_card_layout_second
 
+    var priceBack = itemView.chapter_paid_back
+    var priceText = itemView.chapter_paid_price
+    var priceLabel = itemView.chapter_paid_label
+    var priceInside = itemView.chapter_paid_label_inside
 }

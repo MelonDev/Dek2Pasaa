@@ -2,6 +2,7 @@ package th.ac.up.se.takingbear.Adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -11,7 +12,12 @@ import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Request
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.Data.LessonCard
@@ -49,6 +55,8 @@ class NewLessonAdapter(val lang :String,var colorDark: Int, var color: Int, var 
 
         holder.card.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
         //holder.image.setImageDrawable(ContextCompat.getDrawable(context,slot.image))
+        holder.second.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
+
 
         if(lang.contentEquals(LangSQ.THAI)){
             holder.nameA.text = slot.nameThai
@@ -62,18 +70,33 @@ class NewLessonAdapter(val lang :String,var colorDark: Int, var color: Int, var 
         var hei = height - dpsToPixels(120)
         var he = height / 2
 
+        /*
         if(slot.cover.isEmpty()){
             holder.second.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
         }else {
             holder.second.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
         }
+        */
 
         holder.card.layoutParams = RelativeLayout.LayoutParams(he, hei)
         holder.main.layoutParams = RelativeLayout.LayoutParams(he + dpsToPixels(16), hei)
 
         if (data[position].cover.isNotEmpty()) {
             //Log.e("IMAGE",data[position].cover)
-            Glide.with(context).load(data[position].cover).into(holder.image)
+            Glide.with(context)
+                    .load(data[position].cover)
+                    .listener(object : RequestListener<Drawable>{
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            Log.e("","")
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            holder.second.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite))
+                            return false
+                        }
+                    })
+                    .into(holder.image)
             //holder.overlay.setImageDrawable(ContextCompat.getDrawable(context,overlay))
             if (color == R.color.colorRedDark) {
                 if (orientation == "PORT") {

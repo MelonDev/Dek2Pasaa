@@ -2,12 +2,14 @@ package th.ac.up.se.takingbear
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 
 import kotlinx.android.synthetic.main.activity_main.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -39,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             //add(MainFunctionData("",-1,-1,-1))
             add(MainFunctionData("บทเรียน","Lessons",R.color.colorRedDark,R.color.color_game_red_dark,0,R.drawable.ic_open_book))
             add(MainFunctionData("ทดสอบ","Tests",R.color.color_game_blue,R.color.color_game_blue_dark,1,R.drawable.ic_school_material))
-            add(MainFunctionData("แข่งขัน","Competition",R.color.color_game_green,R.color.color_game_green_dark,2,R.drawable.ic_university))
+            add(MainFunctionData("แข่งขัน","Competition",R.color.color_game_green,R.color.color_game_green_dark,2,R.drawable.ic_muscles))
             add(MainFunctionData("ตั้งค่า","Settings",R.color.color_game_black,R.color.color_game_black_dark,3,R.drawable.ic_settings))
 
 
@@ -96,6 +98,16 @@ class MainActivity : AppCompatActivity() {
 
         fullScreen.loadFunction()
 
+        if(FirebaseAuth.getInstance().currentUser == null){
+
+
+            val intent = Intent(this, GoogleSignInActivity::class.java)
+            //val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,splash_logo , "logo")
+
+            startActivity(intent)
+
+            finish()
+        }
 
 
         OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL)

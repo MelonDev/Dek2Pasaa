@@ -12,7 +12,7 @@ class LessonInfo {
 
     var number = 0
 
-    var price = 0
+    var price :Double = 0.00
     var type = ""
 
 }

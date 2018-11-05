@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.CompetitionActivity
+import th.ac.up.se.takingbear.SettingActivity
 import th.ac.up.se.takingbear.ViewHolder.FunctionViewHolder
 
 
@@ -107,6 +108,17 @@ class ListFunctionAdapter(var activity: FragmentActivity, val data :ArrayList<Ma
                     putExtra("COLOR",slot.color)
                     putExtra("TITLE",title)
                     putExtra("ID",slot.id)
+                    putExtra("DARK",slot.colorDark)
+                }
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this.activity, holder.cardIn, "chapter_card")
+                context.startActivity(intent,options.toBundle())
+            }
+        } else if(slot.id == 3){
+            holder.cardOut.setOnClickListener {
+                var intent = Intent(this.context,SettingActivity::class.java)
+                intent.apply {
+                    putExtra("COLOR",slot.color)
+                    putExtra("TITLE",title)
                     putExtra("DARK",slot.colorDark)
                 }
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this.activity, holder.cardIn, "chapter_card")

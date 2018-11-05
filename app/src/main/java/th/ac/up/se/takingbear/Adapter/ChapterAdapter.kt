@@ -10,17 +10,27 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import com.up.se.tkbcontrol.Data.PeopleInfo
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
+import th.ac.up.se.takingbear.Data.CardObj
 import th.ac.up.se.takingbear.Data.Chapter
 import th.ac.up.se.takingbear.ListCardActivity
 import th.ac.up.se.takingbear.R
 import th.ac.up.se.takingbear.ViewHolder.ChapterViewHolder
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
-class ChapterAdapter(var colorDark: Int, var color: Int, var orientation: String, var data: ArrayList<Chapter>) : RecyclerView.Adapter<ChapterViewHolder>() {
+class ChapterAdapter(val fragment: ListCardActivity, var colorDark: Int, var color: Int, var orientation: String, var data: ArrayList<Chapter>) : RecyclerView.Adapter<ChapterViewHolder>() {
 
     lateinit var context: Context
     lateinit var view: View
@@ -49,39 +59,52 @@ class ChapterAdapter(var colorDark: Int, var color: Int, var orientation: String
     override fun onBindViewHolder(holder: ChapterViewHolder, position: Int) {
 
 
+        val slot = data[position]
 
         holder.card.setCardBackgroundColor(ContextCompat.getColor(context, colorDark))
 
         holder.nameA.text = data[position].name
         holder.nameB.text = data[position].name
 
+        if (slot.info.type.contentEquals("FREE")) {
+            unSetPrice(holder, position)
+        } else {
+
+            FirebaseDatabase.getInstance().reference
+                    .child("Peoples")
+                    .child(FirebaseAuth.getInstance().currentUser!!.uid.toString())
+                    .child("Coupons").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                            Log.e("", "")
+                        }
+
+                        override fun onDataChange(p0: DataSnapshot) {
+                            if (p0.value != null) {
+                                var mD = ArrayList<String>()
+                                var count = 0
+                                p0.children.forEach {
+                                    mD.add(it.key.toString())
+                                    count += 1
+                                    if (count == p0.children.count()) {
+                                        val bool: Boolean = data[position].info.key in mD
+
+                                        if (!bool) {
+                                            setPrice(holder, slot)
+                                        } else {
+                                            unSetPrice(holder,position)
+                                        }
+                                    }
+                                }
+                            } else {
+                                setPrice(holder, slot)
+                            }
+                        }
+                    })
+
+
+        }
 
         //Log.e("p",position.toString())
-
-        holder.card.setOnClickListener {
-            if (color == R.color.colorRedDark) {
-                val intent = Intent(context, ListCardActivity::class.java)
-                intent.putExtra("COLOR", color)
-                intent.putExtra("TITLE", data[position].name)
-                intent.putExtra("ID", 101)
-                intent.putExtra("DARK", colorDark)
-                intent.putExtra("POS", position)
-                intent.putExtra("CHAPTER", data[position].info.key)
-
-                context.startActivity(intent)
-            } else if (color == R.color.color_game_blue) {
-
-                val intent = Intent(context, ListCardActivity::class.java)
-                intent.putExtra("COLOR", color)
-                intent.putExtra("TITLE", data[position].name)
-                intent.putExtra("ID", 100)
-                intent.putExtra("DARK", colorDark)
-                intent.putExtra("POS", data[position].info.key)
-                intent.putExtra("CHAPTER", data[position].info.key)
-
-                context.startActivity(intent)
-            }
-        }
 
 
 //orientation.contentEquals("LAND") &&
@@ -119,6 +142,58 @@ class ChapterAdapter(var colorDark: Int, var color: Int, var orientation: String
         //holder.nameB.textSize = dpsToPixels(30).toFloat()
 
 
+    }
+
+    fun setPrice(holder: ChapterViewHolder, slot: Chapter) {
+        holder.priceBack.visibility = View.VISIBLE
+
+        holder.priceLabel.setBackgroundColor(ContextCompat.getColor(fragment, colorDark))
+        holder.priceInside.setBackgroundColor(ContextCompat.getColor(fragment, color))
+
+
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+
+        //holder.priceText.setTextColor(ContextCompat.getColor(fragment,colorDark))
+        val sqlite = LangSQ(fragment)
+        if (sqlite.read().contentEquals(LangSQ.THAI)) {
+
+            holder.priceText.text = "${df.format(slot.info.price)}\nบาท"
+
+
+        } else {
+            holder.priceText.text = "${df.format(slot.info.price)}\nBaht"
+
+        }
+    }
+
+    fun unSetPrice(holder: ChapterViewHolder, position: Int) {
+        holder.priceBack.visibility = View.GONE
+
+        holder.card.setOnClickListener {
+            if (color == R.color.colorRedDark) {
+                val intent = Intent(context, ListCardActivity::class.java)
+                intent.putExtra("COLOR", color)
+                intent.putExtra("TITLE", data[position].name)
+                intent.putExtra("ID", 101)
+                intent.putExtra("DARK", colorDark)
+                intent.putExtra("POS", position)
+                intent.putExtra("CHAPTER", data[position].info.key)
+
+                context.startActivity(intent)
+            } else if (color == R.color.color_game_blue) {
+
+                val intent = Intent(context, ListCardActivity::class.java)
+                intent.putExtra("COLOR", color)
+                intent.putExtra("TITLE", data[position].name)
+                intent.putExtra("ID", 100)
+                intent.putExtra("DARK", colorDark)
+                intent.putExtra("POS", data[position].info.key)
+                intent.putExtra("CHAPTER", data[position].info.key)
+
+                context.startActivity(intent)
+            }
+        }
     }
 
     private fun dpsToPixels(dps: Int): Int {

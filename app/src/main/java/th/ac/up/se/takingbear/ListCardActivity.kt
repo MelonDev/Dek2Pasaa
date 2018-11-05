@@ -64,6 +64,8 @@ class ListCardActivity : AppCompatActivity() {
     private lateinit var adapterNumber: NumberAdapter
     private lateinit var adapterWord: NewLessonAdapter
 
+    private lateinit var dataPrice :ArrayList<CardObj>
+
 
     private lateinit var firebase: DatabaseReference
 
@@ -110,6 +112,7 @@ class ListCardActivity : AppCompatActivity() {
         dataLesson = ArrayList()
 
         dataNumber = ArrayList()
+        dataPrice = ArrayList()
 
 
         bundle = intent.extras!!
@@ -128,20 +131,20 @@ class ListCardActivity : AppCompatActivity() {
             finish()
         }
 
-        score_card.setCardBackgroundColor(ContextCompat.getColor(this,colorDark))
+        score_card.setCardBackgroundColor(ContextCompat.getColor(this, colorDark))
 
         list_popup_layout.visibility = View.GONE
 
         val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
 
-        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").addValueEventListener(object :ValueEventListener{
+        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").addValueEventListener(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
-                Log.e("","")
+                Log.e("", "")
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                if(p0.value != null){
+                if (p0.value != null) {
 
                     /*
                     val profile = p0.getValue(PeopleInfo::class.java)!!
@@ -162,16 +165,16 @@ class ListCardActivity : AppCompatActivity() {
                         val a = it.key.toString()
                         count += 1
 
-                        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(a).addListenerForSingleValueEvent(object : ValueEventListener{
+                        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(a).addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onCancelled(p0: DatabaseError) {
-                                Log.e("","")
+                                Log.e("", "")
                             }
 
                             override fun onDataChange(p1: DataSnapshot) {
-                                if(p1.value != null){
+                                if (p1.value != null) {
                                     score += p1.children.count()
 
-                                    if(count == p0.children.count()){
+                                    if (count == p0.children.count()) {
                                         if (sq.read().contentEquals(LangSQ.THAI)) {
                                             score_text.text = "คะแนนของฉัน: ${score}"
                                         } else {
@@ -249,7 +252,7 @@ class ListCardActivity : AppCompatActivity() {
             }*/
 
 
-            adapterChapter = ChapterAdapter(this.colorDark, this.color, "LAND", dataChapter)
+            adapterChapter = ChapterAdapter(this,this.colorDark, this.color, "LAND", dataChapter)
             recyclerView.adapter = adapterChapter
 
             task.startLoad()
@@ -352,31 +355,31 @@ class ListCardActivity : AppCompatActivity() {
                 override fun onDataChange(p2: DataSnapshot) {
                     if (p2.value != null) {
 */
-                        firebase.child("Lessons").child(key!!).child("Tests").addListenerForSingleValueEvent(object : ValueEventListener {
+            firebase.child("Lessons").child(key!!).child("Tests").addListenerForSingleValueEvent(object : ValueEventListener {
 
 
-                            override fun onCancelled(p0: DatabaseError) {
-                                Log.e("", "")
-                            }
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.e("", "")
+                }
 
-                            override fun onDataChange(p0: DataSnapshot) {
-                                if (p0.value != null) {
-
-
-                                    if (task.isInActive()) {
-                                        task.activeNow()
-                                        QuizLoadData(p0)
-                                    } else {
-                                        task.overActive(p0)
-                                    }
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.value != null) {
 
 
-                                } else {
-                                    dataNumber.clear()
-                                    stopProgress()
-                                }
-                            }
-                        })
+                        if (task.isInActive()) {
+                            task.activeNow()
+                            QuizLoadData(p0)
+                        } else {
+                            task.overActive(p0)
+                        }
+
+
+                    } else {
+                        dataNumber.clear()
+                        stopProgress()
+                    }
+                }
+            })
 
 /*
                     }
@@ -507,20 +510,29 @@ class ListCardActivity : AppCompatActivity() {
                         if (sqlite.read().contentEquals(LangSQ.THAI)) {
                             val chapter: Chapter = Chapter(info.nameThai, info.cover)
                             chapter.info = info
-                            dataChapter.add(chapter)
+                            if (info.status.contentEquals("RELEASE")) {
+                                dataChapter.add(chapter)
 
-                            dataChapter.sortBy { selector(it) }
-                            adapterChapter.notifyDataSetChanged()
+
+                                dataChapter.sortBy { selector(it) }
+                                adapterChapter.notifyDataSetChanged()
+                            }
+
 
                             //Log.e("size2",dataChapter.size.toString())
 
                         } else {
                             val chapter: Chapter = Chapter(info.nameEng, info.cover)
                             chapter.info = info
-                            dataChapter.add(chapter)
-                            dataChapter.sortBy { selector(it) }
 
-                            adapterChapter.notifyDataSetChanged()
+                            if (info.status.contentEquals("RELEASE")) {
+
+                                dataChapter.add(chapter)
+                                dataChapter.sortBy { selector(it) }
+
+                                adapterChapter.notifyDataSetChanged()
+                            }
+
 
                             //Log.e("size3",dataChapter.size.toString())
 
@@ -785,7 +797,6 @@ class ListCardActivity : AppCompatActivity() {
 
     fun showProgress() {
         list_loading_popup_layout.visibility = View.VISIBLE
-        list_loading_text
 
         if (sq.read().contentEquals(LangSQ.THAI)) {
             list_loading_text.text = "กำลังโหลด"
