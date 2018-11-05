@@ -12,17 +12,34 @@ import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.Tools.FSTool
 import th.ac.up.se.takingbear.Tools.MelonFirebaseProcess
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.mylhyl.circledialog.CircleDialog
+import com.mylhyl.circledialog.callback.ConfigButton
+import com.mylhyl.circledialog.callback.ConfigDialog
+import com.mylhyl.circledialog.callback.ConfigText
+import com.mylhyl.circledialog.params.ButtonParams
+import com.mylhyl.circledialog.params.DialogParams
+import com.mylhyl.circledialog.params.ProgressParams
+import com.mylhyl.circledialog.params.TextParams
 import kotlinx.android.synthetic.main.dialog_add.view.*
+import java.io.ByteArrayOutputStream
 
 
 class SettingActivity : AppCompatActivity() {
@@ -38,8 +55,17 @@ class SettingActivity : AppCompatActivity() {
 
     lateinit var sqlite: LangSQ
 
+    lateinit var uploadDialog: DialogFragment
+    lateinit var builder: CircleDialog.Builder
+    var filepath: Uri? = null
+
+
     lateinit var data: ArrayList<PeopleInfo>
     private lateinit var task: MelonFirebaseProcess
+
+    companion object {
+        const val REQUEST_PERMISSION_GALLERY = 56001
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +94,7 @@ class SettingActivity : AppCompatActivity() {
             setting_back_text_b.text = "กลับ"
 
             setting_a1_text.text = "เปลี่ยนรูปภาพประจำตัว"
-            setting_a2_text.text = "เปลี่ยนชื่อ"
+            setting_a2_text.text = "เปลี่ยนชื่อผู้ใช้"
             setting_a3_text.text = "ติดต่อผู้ดูแล"
             setting_a4_text.text = "เกี่ยวกับ"
             setting_a5_text.text = "ลงชื่อออก"
@@ -92,6 +118,10 @@ class SettingActivity : AppCompatActivity() {
             val i = Intent(Intent.ACTION_VIEW)
             i.data = Uri.parse(url)
             startActivity(i)
+        }
+
+        setting_a1_layout.setOnClickListener {
+            getPermision(android.Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_GALLERY)
         }
 
         setting_a2_layout.setOnClickListener {
@@ -242,6 +272,137 @@ class SettingActivity : AppCompatActivity() {
         //Log.e("COLOR",Color.RED.toString())
 
         //list_loading_text.setTextColor(ContextCompat.getColor(this,color))
+    }
+
+    fun goToGallery() {
+        val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(Intent.createChooser(intent, "เลือกรูปจาก"), REQUEST_PERMISSION_GALLERY)
+    }
+
+    fun getPermision(permission: String, requestCode: Int) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+            } else {
+                goToGallery()
+            }
+        }
+    }
+
+    fun bitmapToByteArray(bitmap: Bitmap, per: Int): ByteArray {
+        var baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, per, baos)
+        return baos.toByteArray()
+    }
+
+    fun imageCalculate(bitmap: Bitmap): ByteArray {
+        val maxSize = 100
+
+        var data = bitmapToByteArray(bitmap, 100)
+
+        var count = maxSize
+        var passed = false
+
+
+        if ((data.size) / 1000 <= maxSize) {
+            passed = true
+        }
+
+        while (((data.size) / 1000 > maxSize || !passed)) {
+            if ((bitmapToByteArray(bitmap, count / 2).size) / 1000 < 100) {
+                data = bitmapToByteArray(bitmap, count / 2)
+                passed = true
+            } else if ((bitmapToByteArray(bitmap, count / 4).size) / 1000 < 100) {
+                data = bitmapToByteArray(bitmap, count / 4)
+                passed = true
+            } else {
+                count /= 4
+            }
+        }
+
+        return data
+    }
+
+
+
+    fun showUploadDialog(string: String) {
+        builder = CircleDialog.Builder()
+        uploadDialog = builder
+                .configDialog { params -> params.canceledOnTouchOutside = false }
+                .setProgressText(string)
+                .setProgressStyle(ProgressParams.STYLE_SPINNER)
+                .show(supportFragmentManager)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_PERMISSION_GALLERY && resultCode == RESULT_OK) {
+            filepath = data!!.data
+
+            upload()
+
+        }
+
+    }
+
+    fun upload() {
+        if (filepath != null) {
+
+            val bmp = MediaStore.Images.Media.getBitmap(contentResolver, filepath)
+
+
+            val data = imageCalculate(bmp)
+
+            Log.e("DATA", data.size.toString())
+
+            showUploadDialog("กำลังอัปโหลด...")
+            val ref = FirebaseStorage.getInstance().reference.child("User").child(FirebaseAuth.getInstance().currentUser!!.uid.toString())
+            ref.putBytes(data)
+                    .addOnSuccessListener { it ->
+                        ref.downloadUrl.addOnSuccessListener {
+                            //cover = it.toString()
+                            FirebaseDatabase.getInstance().reference.child("Peoples").child(FirebaseAuth.getInstance().currentUser!!.uid.toString()).child("Info").child("image").setValue(it.toString()).addOnSuccessListener {
+                                uploadDialog.dismiss()
+                                showCompleteDialog5("อัพโหลดเสร็จสิ้น")
+                            }
+                            //Picasso.get().load(it).into(this@LessonActivity.lesson_layout_cover_image)
+                            //userInfo.photoURL = it.toString()
+                        }
+                    }.addOnFailureListener {
+                        uploadDialog.dismiss()
+                        showCompleteDialog5("เกิดข้อผิดพลาด")
+                    }.addOnCanceledListener {
+                        uploadDialog.dismiss()
+                        Log.e("UPLOAD", "CANCEL")
+                    }.addOnProgressListener {
+                        val progress = 100.0 * it.bytesTransferred / it.totalByteCount
+                        Log.e("PROGRESS", progress.toString())
+                    }
+        }
+    }
+
+    fun showCompleteDialog5(status: String) {
+        CircleDialog.Builder(this
+        )
+                .configDialog { params -> params.canceledOnTouchOutside = false }
+                .setText(status)
+                .configText { params ->
+                    params!!.textSize = 60
+                    params.textColor = ContextCompat.getColor(this@SettingActivity, R.color.facebookColor)
+                    params.padding = intArrayOf(0, 0, 0, 0) //(Bottom,TOP,Right,Left)
+                    params.height = 250
+                }
+                .setPositive("รับทราบ") {
+                    Log.e("", "")
+                }
+                .configPositive { params ->
+                    params.textSize = 50
+                    params.textColor = ContextCompat.getColor(this@SettingActivity, R.color.colorText)
+                }.show()
+
+
     }
 
     fun stopProgress() {

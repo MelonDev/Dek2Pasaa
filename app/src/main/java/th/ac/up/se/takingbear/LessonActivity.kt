@@ -16,9 +16,11 @@ import com.squareup.picasso.Picasso
 import android.R.raw
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -28,6 +30,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -92,6 +95,18 @@ class LessonActivity : AppCompatActivity(){
     var thai :String = ""
     var eng :String = ""
 
+    companion object {
+        const val REQUEST_CODE_VOICE_RECOGNITION = 1001
+        const val REQUEST_CODE_THAI_VOICE_RECOGNITION = 1002
+
+        const val REQUEST_PERMISSION_RADIO = 56001
+        const val REQUEST_PERMISSION_RADIO_THAI = 56002
+
+
+
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lesson)
@@ -152,11 +167,16 @@ class LessonActivity : AppCompatActivity(){
 
 
         lesson_eng_mic_btn.setOnClickListener {
-            callVoiceRecognition()
+            //callVoiceRecognition()
+
+            getPermision(android.Manifest.permission.RECORD_AUDIO, REQUEST_PERMISSION_RADIO,1)
+
         }
 
         lesson_thai_mic_btn.setOnClickListener {
-            callThaiVoiceRecognition()
+            //callThaiVoiceRecognition()
+            getPermision(android.Manifest.permission.RECORD_AUDIO, REQUEST_PERMISSION_RADIO_THAI,0)
+
         }
 
         lesson_forward_btn.setOnClickListener {
@@ -524,10 +544,21 @@ class LessonActivity : AppCompatActivity(){
                 TypedValue.COMPLEX_UNIT_DIP, dps.toFloat(), r.displayMetrics).toInt()
     }
 
-    companion object {
-        const val REQUEST_CODE_VOICE_RECOGNITION = 1001
-        const val REQUEST_CODE_THAI_VOICE_RECOGNITION = 1002
 
+    fun getPermision(permission: String, requestCode: Int,id :Int) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+            } else {
+                //goToGallery()
+                if(id == 0){
+                    callThaiVoiceRecognition()
+                }else {
+                    callVoiceRecognition()
+                }
+            }
+        }
     }
 
     private fun callVoiceRecognition() {
@@ -547,6 +578,11 @@ class LessonActivity : AppCompatActivity(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        if (requestCode == REQUEST_PERMISSION_RADIO && resultCode == RESULT_OK) {
+
+        } else if (requestCode == REQUEST_PERMISSION_RADIO_THAI && resultCode == RESULT_OK) {
+
+        }
         if (requestCode == REQUEST_CODE_VOICE_RECOGNITION && resultCode == Activity.RESULT_OK) {
             val resultList = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
 

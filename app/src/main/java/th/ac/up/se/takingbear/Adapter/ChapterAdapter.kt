@@ -89,17 +89,20 @@ class ChapterAdapter(val fragment: ListCardActivity, var colorDark: Int, var col
                                     mD.add(coupon.key)
                                     count += 1
                                     if (count == p0.children.count()) {
-                                        val bool: Boolean = data[position].info.key in mD
-                                        //val it = checkData[check.indexOf(data[position].key)]
-                                        //val pos = data[mD.indexOf(data[position].info.key)]
+                                        if(mD.size > 0){
+                                            val bool: Boolean = data[position].info.key in mD
+                                            //val it = checkData[check.indexOf(data[position].key)]
+                                            //val pos = data[mD.indexOf(data[position].info.key)]
 
 
-                                        if (bool && coupon.type.contentEquals("VIP")) {
-                                            unSetPrice(holder,position)
+                                            if (bool && coupon.type.contentEquals("VIP")) {
+                                                unSetPrice(holder,position)
 
-                                        } else {
-                                            setPrice(holder, slot)
+                                            } else {
+                                                setPrice(holder, slot)
+                                            }
                                         }
+
                                     }
                                 }
                             } else {

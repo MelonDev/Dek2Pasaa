@@ -2,6 +2,7 @@ package th.ac.up.se.takingbear
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +18,10 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mylhyl.circledialog.CircleDialog
 import com.mylhyl.circledialog.callback.ConfigButton
 import com.mylhyl.circledialog.callback.ConfigDialog
@@ -100,19 +104,36 @@ class GoogleSignInActivity : AppCompatActivity() {
 
                         val fa = FirebaseAuth.getInstance().currentUser!!
 
-                        val user = PeopleInfo()
-                        user.apply {
-                            this.key = fa.uid
-                            this.name = fa.displayName.toString()
-                            this.image = fa.photoUrl.toString()
-                        }
+                        FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").addListenerForSingleValueEvent(object : ValueEventListener{
+                            override fun onCancelled(p0: DatabaseError) {
+                                Log.e("","")
+                            }
 
-                        FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").setValue(user).addOnSuccessListener {
-                            waitDialog.dismiss()
-                            val intent = Intent(this, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
+                            override fun onDataChange(p0: DataSnapshot) {
+                                if(p0.value != null){
+                                    waitDialog.dismiss()
+                                    val intent = Intent(this@GoogleSignInActivity, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }else {
+                                    val user = PeopleInfo()
+                                    user.apply {
+                                        this.key = fa.uid
+                                        this.name = fa.displayName.toString()
+                                        this.image = fa.photoUrl.toString()
+                                    }
+
+                                    FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").setValue(user).addOnSuccessListener {
+                                        waitDialog.dismiss()
+                                        val intent = Intent(this@GoogleSignInActivity, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                }
+                            }
+                        })
+
+
 
 
 
