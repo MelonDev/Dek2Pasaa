@@ -2,13 +2,18 @@ package th.ac.up.se.takingbear
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -22,6 +27,7 @@ import com.mylhyl.circledialog.params.ProgressParams
 import com.up.se.tkbcontrol.Data.PeopleInfo
 
 import kotlinx.android.synthetic.main.activity_list_card.*
+import kotlinx.android.synthetic.main.dialog_add.view.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
@@ -36,6 +42,7 @@ import th.ac.up.se.takingbear.Tools.FSTool
 import th.ac.up.se.takingbear.Tools.MelonFirebaseProcess
 import th.ac.up.se.thaicardgame.DataArray.Lesson
 import th.ac.up.se.thaicardgame.DataArray.Quiz
+import java.util.HashMap
 
 class ListCardActivity : AppCompatActivity() {
 
@@ -64,7 +71,7 @@ class ListCardActivity : AppCompatActivity() {
     private lateinit var adapterNumber: NumberAdapter
     private lateinit var adapterWord: NewLessonAdapter
 
-    private lateinit var dataPrice :ArrayList<CardObj>
+    private lateinit var dataPrice: ArrayList<CardObj>
 
 
     private lateinit var firebase: DatabaseReference
@@ -90,6 +97,8 @@ class ListCardActivity : AppCompatActivity() {
     fun selector(p: ChapterCheck): Int {
         return p.number
     }
+
+    var u = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,6 +130,7 @@ class ListCardActivity : AppCompatActivity() {
         title = bundle.getString("TITLE")!!
         id = bundle.getInt("ID")
 
+        list_paid_layout.visibility = View.GONE
 
         list_card_title_A.text = title
         list_card_title_B.text = title
@@ -135,7 +145,7 @@ class ListCardActivity : AppCompatActivity() {
 
         list_popup_layout.visibility = View.GONE
 
-        val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+        u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
 
         FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").addValueEventListener(object : ValueEventListener {
 
@@ -252,7 +262,7 @@ class ListCardActivity : AppCompatActivity() {
             }*/
 
 
-            adapterChapter = ChapterAdapter(this,this.colorDark, this.color, "LAND", dataChapter)
+            adapterChapter = ChapterAdapter(this, this.colorDark, this.color, "LAND", dataChapter)
             recyclerView.adapter = adapterChapter
 
             task.startLoad()
@@ -813,6 +823,40 @@ class ListCardActivity : AppCompatActivity() {
         list_loading_popup_layout.visibility = View.GONE
 
     }
+
+    fun showAlert(){
+        list_paid_layout.visibility = View.VISIBLE
+
+        if (sq.read().contentEquals(LangSQ.THAI)) {
+            list_paid_popup_title_b.text = "เนื้อหาถูกจำกัด"
+            list_paid_popup_sub_detail_text.text = "หากคุณต้องการเข้าถึงเนื้อหานี้ กรุณาติดต่อผู้ดูเพื่อทำการเปิดระบบหรือชำระเงิน"
+            list_paid_popup_close_btn.text = "ปิด"
+            list_paid_popup_confirm_btn.text = "เปิดแชท"
+        }else {
+            list_paid_popup_title_b.text = "Content is limited"
+            list_paid_popup_sub_detail_text.text = "If you want to access this content. Please contact the viewer to open the system or make a payment."
+            list_paid_popup_close_btn.text = "Cancel"
+            list_paid_popup_confirm_btn.text = "Open Chat"
+        }
+
+
+        list_paid_popup_close_btn.setOnClickListener {
+            hideAlert()
+        }
+
+        list_paid_popup_confirm_btn.setOnClickListener {
+            val url = "https://m.me/LanguageandApplication"
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(url)
+            startActivity(i)
+        }
+
+    }
+
+    fun hideAlert(){
+        list_paid_layout.visibility = View.GONE
+    }
+
 
 
 }

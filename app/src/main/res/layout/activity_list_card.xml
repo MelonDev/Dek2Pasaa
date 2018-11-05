@@ -264,6 +264,143 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/list_paid_layout"
+            android:background="#c8000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                app:cardBackgroundColor="@color/colorWhite"
+                android:layout_centerInParent="true"
+                android:layout_width="400dp"
+                android:layout_height="280dp"
+                app:cardCornerRadius="30dp"
+                >
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:singleLine="true"
+
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        android:id="@+id/list_paid_popup_title_a"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ข้อความ"
+                        android:fontFamily="@font/ts_np"
+                        android:textSize="50dp"
+                        android:layout_centerHorizontal="true"
+                        />
+                    <TextView
+                        android:singleLine="true"
+                        android:gravity="center_horizontal"
+                        android:id="@+id/list_paid_popup_title_b"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ข้อความ"
+                        android:textColor="@color/facebookColor"
+                        android:fontFamily="@font/ts_som_np"
+                        android:textSize="50dp"
+                        android:layout_centerHorizontal="true"
+                        />
+
+                    <ScrollView
+                        android:layout_marginTop="80dp"
+
+                        android:layout_marginBottom="70dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        >
+                        <TextView
+
+
+                            android:id="@+id/list_paid_popup_sub_detail_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="36dp"
+                            android:text="ปุ่มกด"
+                            android:fontFamily="@font/ts_som_np"
+                            android:layout_centerHorizontal="true"
+                            />
+
+                    </ScrollView>
+
+
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="70dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="0dp"
+                        android:background="#a9a9a9"
+                        />
+
+                    <LinearLayout
+                        android:layout_centerHorizontal="true"
+                        android:paddingBottom="20dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:id="@+id/list_paid_popup_close_btn"
+                            android:layout_marginTop="0dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="40dp"
+                            android:text="ปุ่มกด"
+                            android:fontFamily="@font/ts_som_np"
+                            android:layout_centerHorizontal="true"
+                            />
+
+                        <TextView
+                            android:layout_marginLeft="50dp"
+                            android:id="@+id/list_paid_popup_confirm_btn"
+                            android:layout_marginTop="0dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="40dp"
+                            android:text="ปุ่มกด"
+                            android:textColor="@color/facebookColor"
+                            android:fontFamily="@font/ts_som_np"
+                            android:layout_centerHorizontal="true"
+                            />
+
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+
 
 
     </RelativeLayout>

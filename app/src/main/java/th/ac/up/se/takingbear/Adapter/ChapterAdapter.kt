@@ -24,6 +24,7 @@ import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.se.takingbear.Data.CardObj
 import th.ac.up.se.takingbear.Data.Chapter
+import th.ac.up.se.takingbear.Data.CouponPeopleInfo
 import th.ac.up.se.takingbear.ListCardActivity
 import th.ac.up.se.takingbear.R
 import th.ac.up.se.takingbear.ViewHolder.ChapterViewHolder
@@ -83,15 +84,21 @@ class ChapterAdapter(val fragment: ListCardActivity, var colorDark: Int, var col
                                 var mD = ArrayList<String>()
                                 var count = 0
                                 p0.children.forEach {
-                                    mD.add(it.key.toString())
+                                    //mD.add(it.key.toString())
+                                    val coupon = it.getValue(CouponPeopleInfo::class.java)!!
+                                    mD.add(coupon.key)
                                     count += 1
                                     if (count == p0.children.count()) {
                                         val bool: Boolean = data[position].info.key in mD
+                                        //val it = checkData[check.indexOf(data[position].key)]
+                                        //val pos = data[mD.indexOf(data[position].info.key)]
 
-                                        if (!bool) {
-                                            setPrice(holder, slot)
-                                        } else {
+
+                                        if (bool && coupon.type.contentEquals("VIP")) {
                                             unSetPrice(holder,position)
+
+                                        } else {
+                                            setPrice(holder, slot)
                                         }
                                     }
                                 }
@@ -163,6 +170,12 @@ class ChapterAdapter(val fragment: ListCardActivity, var colorDark: Int, var col
 
         } else {
             holder.priceText.text = "${df.format(slot.info.price)}\nBaht"
+
+        }
+
+        holder.card.setOnClickListener {
+
+            fragment.showAlert()
 
         }
     }
