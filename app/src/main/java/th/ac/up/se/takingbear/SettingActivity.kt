@@ -39,6 +39,7 @@ import com.mylhyl.circledialog.params.DialogParams
 import com.mylhyl.circledialog.params.ProgressParams
 import com.mylhyl.circledialog.params.TextParams
 import kotlinx.android.synthetic.main.dialog_add.view.*
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.io.ByteArrayOutputStream
 
 
@@ -84,6 +85,9 @@ class SettingActivity : AppCompatActivity() {
         color = bundle.getInt("COLOR")
         colorDark = bundle.getInt("DARK")
         title = bundle.getString("TITLE")!!
+
+        OverScrollDecoratorHelper.setUpOverScroll(setting_scrollview)
+
 
         setting_back.setOnClickListener {
             finish()

@@ -63,7 +63,7 @@ class GoogleSignInActivity : AppCompatActivity() {
 
 
         google_login_btn.setOnClickListener {
-            Toast.makeText(this, "PROCESS", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "PROCESS", Toast.LENGTH_SHORT).show()
             signIn()
         }
 
@@ -86,7 +86,11 @@ class GoogleSignInActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
-                Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(this,"${e.statusCode}: ${e.message}",Toast.LENGTH_LONG).show()
+
+                FirebaseDatabase.getInstance().reference.child("Log").push().child("Message").setValue(e.toString())
 
                 waitDialog.dismiss()
                 //setErrorDialog("คำขอถูกยกเลิก")
@@ -147,6 +151,8 @@ class GoogleSignInActivity : AppCompatActivity() {
                     } else {
                         waitDialog.dismiss()
                         Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Firebase Error", Toast.LENGTH_SHORT).show()
+
                         //updateUI(null)
                     }
                 }

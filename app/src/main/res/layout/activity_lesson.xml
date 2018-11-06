@@ -109,6 +109,7 @@
                     app:cardCornerRadius="20dp">
 
                     <ScrollView
+                        android:id="@+id/lesson_scrollview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -117,8 +118,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_centerHorizontal="true"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginBottom="16dp">
+                            android:paddingTop="20dp"
+                            android:paddingBottom="50dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -132,7 +133,7 @@
                                     android:id="@+id/lesson_text_A"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginBottom="20dp"
+                                    android:layout_marginBottom="10dp"
                                     android:fontFamily="@font/ts_som_np"
                                     android:text="คำอ่าน"
                                     android:textColor="@color/colorWhite"
@@ -140,9 +141,18 @@
                                     android:visibility="visible" />
 
                                 <RelativeLayout
+                                    android:id="@+id/lesson_indicator_A"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#6effffff"
+                                    />
+
+                                <RelativeLayout
+
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="0dp">
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp">
 
                                     <TextView
                                         android:id="@+id/lesson_text_B"
@@ -208,6 +218,13 @@
                                     </androidx.cardview.widget.CardView>
 
                                 </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:id="@+id/lesson_indicator_ฺB"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#6effffff"
+                                    />
 
 
                                 <RelativeLayout
@@ -353,6 +370,76 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/lesson_loading_popup_layout"
+            android:background="#c8000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                app:cardBackgroundColor="@color/colorWhite"
+                android:layout_centerInParent="true"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                app:cardCornerRadius="30dp"
+                >
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="กำลังเปิดไฟล์"
+                        android:fontFamily="@font/ts_np"
+                        android:textSize="50dp"
+                        android:layout_centerHorizontal="true"
+                        />
+                    <TextView
+                        android:id="@+id/lesson_loading_text"
+
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="กำลังเปิดไฟล์"
+                        android:textColor="@color/facebookColor"
+                        android:fontFamily="@font/ts_som_np"
+                        android:textSize="50dp"
+                        android:layout_centerHorizontal="true"
+                        />
+
+
+                    <ProgressBar
+                        android:id="@+id/lesson_loading_progrss"
+                        android:layout_marginTop="100dp"
+                        android:src="@drawable/ic_lock"
+                        android:tint="@color/color_game_blue"
+                        android:layout_width="110dp"
+                        android:theme="@style/Facebook"
+                        android:layout_height="110dp"
+                        android:layout_centerHorizontal="true"
+                        />
+
+                </RelativeLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="gone"
             android:id="@+id/lesson_popup_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

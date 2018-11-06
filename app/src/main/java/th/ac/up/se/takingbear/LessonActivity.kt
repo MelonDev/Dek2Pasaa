@@ -20,6 +20,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Build
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -53,6 +54,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.se.takingbear.Data.WordInfo
 import java.util.*
@@ -123,13 +125,15 @@ class LessonActivity : AppCompatActivity(){
         post = bundle.getString("POST")!!
 
 
+        OverScrollDecoratorHelper.setUpOverScroll(lesson_scrollview)
+
         //Log.e(pre, post)
         //Log.e("KEY",key)
 
         dataWord = ArrayList()
 
         lesson_popup_layout.visibility = View.GONE
-
+        popupLoadingHide()
 
         //position = y
 
@@ -347,8 +351,10 @@ class LessonActivity : AppCompatActivity(){
 
         if (card.read.isEmpty()) {
             lesson_text_A.visibility = View.GONE
+            lesson_indicator_A.visibility = View.GONE
         } else {
             lesson_text_A.visibility = View.VISIBLE
+            lesson_indicator_A.visibility = View.VISIBLE
         }
 
 
@@ -421,10 +427,14 @@ class LessonActivity : AppCompatActivity(){
 
 
         lesson_thai_btn.setOnClickListener {
+            //popupLoadingShow()
+
             dataWord[currentPosition].thaiSound.playSound(lesson_thai_btn, lesson_thai_btn_image,lesson_thai_btn_progress)
         }
 
         lesson_eng_btn.setOnClickListener {
+            //popupLoadingShow()
+
             dataWord[currentPosition].engSound.playSound(lesson_eng_btn, lesson_eng_btn_image,lesson_eng_btn_progress)
         }
 
@@ -445,20 +455,14 @@ class LessonActivity : AppCompatActivity(){
 
     private fun String.playSound(cardView: CardView, image: ImageView,progress: ProgressBar) {
 
-        if (this.isNotEmpty()) {
-            //progress.visibility = View.VISIBLE
-            start = true
-            if (!play) {
-                //media = MediaPlayer.create(this@LessonActivity, this)
-                //media.start()
-                play = true
-                audioClick(true, cardView, image,progress)
+        val task = someTask(this@LessonActivity,cardView, image,progress) {
+            //audioClick(true, cardView, image,progress)
 
-                mediaPlayer = MediaPlayer()
+            mediaPlayer = MediaPlayer()
 
-                mediaPlayer!!.setDataSource(this)
-                mediaPlayer!!.prepare()
-                mediaPlayer!!.start()
+            mediaPlayer!!.setDataSource(this)
+            mediaPlayer!!.prepare()
+            mediaPlayer!!.start()
 
 
                 mediaPlayer!!.setOnCompletionListener {
@@ -467,31 +471,90 @@ class LessonActivity : AppCompatActivity(){
                     mediaPlayer = null
 
                     play = false
-                    audioClick(false, cardView, image,progress)
+                    audioClick(2, cardView, image,progress)
+
+                    //popupLoadingHide()
 
                 }
 
 
-            } else {
+        }
+
+        if (this.isNotEmpty()) {
+            //progress.visibility = View.VISIBLE
+            start = true
+            if (!play) {
+                //media = MediaPlayer.create(this@LessonActivity, this)
+                //media.start()
+
+                play = true
+
+               task.execute()
+
+
+
+
+
+
+            } /*else {
                 play = false
                 mediaPlayer!!.stop()
                 mediaPlayer = null
 
-                audioClick(false, lesson_thai_btn, lesson_thai_btn_image,lesson_thai_btn_progress)
-                audioClick(false, lesson_eng_btn, lesson_eng_btn_image,lesson_eng_btn_progress)
-            }
+                //popupLoadingHide()
+                task.cancel(true)
+
+                audioClick(2, lesson_thai_btn, lesson_thai_btn_image,lesson_thai_btn_progress)
+                audioClick(2, lesson_eng_btn, lesson_eng_btn_image,lesson_eng_btn_progress)
+
+            }*/
         }
     }
 
-    private fun audioClick(action: Boolean, card: CardView, image: ImageView,progress :ProgressBar) {
+    class someTask(val lessonActivity: LessonActivity,val cardView: CardView, val image: ImageView,val progress: ProgressBar,val handler: () -> Unit) : AsyncTask<Void, Void, String>() {
+        override fun doInBackground(vararg params: Void?): String? {
+            handler()
+            return null
+        }
 
-        if (action) {
+        override fun onPreExecute() {
+            super.onPreExecute()
+            lessonActivity.audioClick(0, cardView, image,progress)
+            //lessonActivity.popupLoadingShow()
+
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            //lessonActivity.popupLoadingHide()
+
+            lessonActivity.audioClick(1, cardView, image,progress)
+
+
+        }
+    }
+
+    private fun audioClick(action: Int, card: CardView, image: ImageView,progress :ProgressBar) {
+
+        if(action == 0){
+            progress.visibility = View.VISIBLE
+            card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorRedDark))
+            //image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_speaker))
+            image.visibility = View.GONE
+            //image.setColorFilter(ContextCompat.getColor(this, R.color.colorWhite), android.graphics.PorterDuff.Mode.SRC_IN)
+
+        }
+        else if (action == 1) {
             progress.visibility = View.GONE
+            image.visibility = View.VISIBLE
+
             card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorWhite))
             image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause))
             image.setColorFilter(ContextCompat.getColor(this, R.color.colorRedDark), android.graphics.PorterDuff.Mode.SRC_IN)
         } else {
             progress.visibility = View.GONE
+            image.visibility = View.VISIBLE
+
             card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorRedDark))
             image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_speaker))
             image.setColorFilter(ContextCompat.getColor(this, R.color.colorWhite), android.graphics.PorterDuff.Mode.SRC_IN)
@@ -702,6 +765,24 @@ class LessonActivity : AppCompatActivity(){
         //lesson_popup_image.setImageDrawable(ContextCompat.getDrawable(this, image))
 
 
+    }
+
+    fun popupLoadingShow(){
+        lesson_loading_popup_layout.visibility = View.VISIBLE
+
+
+        if (sqlite.read().contentEquals(LangSQ.THAI)) {
+            lesson_loading_text.text = "กำลังเปิดไฟล์"
+        }else {
+            lesson_loading_text.text = "Opening file"
+
+        }
+
+
+    }
+
+    fun popupLoadingHide(){
+        lesson_loading_popup_layout.visibility = View.GONE
     }
 
     fun check(bool:Boolean){

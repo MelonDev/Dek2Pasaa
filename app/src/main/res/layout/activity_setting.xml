@@ -17,6 +17,7 @@
 
 
     <ScrollView
+        android:id="@+id/setting_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="180dp">
@@ -26,7 +27,10 @@
             android:layout_marginRight="20dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingTop="30dp"
+            android:paddingBottom="50dp"
+            >
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/setting_a1_layout"
