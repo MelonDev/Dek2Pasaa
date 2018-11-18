@@ -100,7 +100,7 @@ class SettingActivity : AppCompatActivity() {
             setting_a1_text.text = "เปลี่ยนรูปภาพประจำตัว"
             setting_a2_text.text = "เปลี่ยนชื่อผู้ใช้"
             setting_a3_text.text = "ติดต่อผู้ดูแล"
-            setting_a4_text.text = "เกี่ยวกับ"
+            setting_a4_text.text = "ขอบคุณด้วยใจ"
             setting_a5_text.text = "ลงชื่อออก"
 
 
@@ -111,7 +111,7 @@ class SettingActivity : AppCompatActivity() {
             setting_a1_text.text = "Change image profile"
             setting_a2_text.text = "Change name"
             setting_a3_text.text = "Contact us"
-            setting_a4_text.text = "About"
+            setting_a4_text.text = "Acknowledgement"
             setting_a5_text.text = "Sign out"
         }
 
@@ -131,6 +131,11 @@ class SettingActivity : AppCompatActivity() {
         setting_a2_layout.setOnClickListener {
             showProgress()
             showNameDialog()
+        }
+
+        setting_a4_layout.setOnClickListener {
+            val intent = Intent(this,AboutActivity::class.java)
+            startActivity(intent)
         }
 
         setting_a5_layout.setOnClickListener {

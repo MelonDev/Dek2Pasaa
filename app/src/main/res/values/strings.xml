@@ -13,6 +13,7 @@
     <string name="title_activity_google_sign_in">GoogleSignInActivity</string>
     <string name="title_activity_new_google_sign_in">NewGoogleSignIn</string>
     <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_about">AboutActivity</string>
 
 
 </resources>
