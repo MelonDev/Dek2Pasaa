@@ -144,11 +144,11 @@ class QuizActivity : AppCompatActivity() {
 
         if (sq.read().contentEquals(LangSQ.THAI)) {
             //quiz_message.text = "ข้อที่ ${position + 1}\n\n${card.question}"
-            quiz_message.text = "ข้อที่ ${card.number}\n\n${card.quesThai}"
+            quiz_message.text = "ข้อที่ ${card.number}\n${card.quesThai}"
 
         } else {
             //quiz_message.text = "No. ${position + 1}\n\n${card.question}"
-            quiz_message.text = "No. ${card.number}\n\n${card.quesEng}"
+            quiz_message.text = "No. ${card.number}\n${card.quesThai}"
 
         }
 
