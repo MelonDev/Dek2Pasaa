@@ -67,6 +67,11 @@ class GoogleSignInActivity : AppCompatActivity() {
             signIn()
         }
 
+        switch_to_facebook.setOnClickListener {
+            val intent = Intent(this@GoogleSignInActivity, FacebookLoginActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
 

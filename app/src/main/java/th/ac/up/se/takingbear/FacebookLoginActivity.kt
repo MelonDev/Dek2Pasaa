@@ -15,6 +15,11 @@ import android.content.Intent
 import com.facebook.*
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.up.se.tkbcontrol.Data.PeopleInfo
 
 
 class FacebookLoginActivity : AppCompatActivity() {
@@ -31,7 +36,9 @@ class FacebookLoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_facebook_login)
 
 
-
+        facebook_login_btn.setOnClickListener {
+            facebookLogin()
+        }
 
 
     }
@@ -45,15 +52,17 @@ class FacebookLoginActivity : AppCompatActivity() {
     }
 
     fun facebookLogin(){
-        /*
+
         FacebookSdk.sdkInitialize(applicationContext)
         auth = FirebaseAuth.getInstance()
 
 
         val accessToken = AccessToken.getCurrentAccessToken()
-        val isLoggedIn = accessToken != null && !accessToken.isExpired
+        //val isLoggedIn = accessToken != null && !accessToken.isExpired
+        val isLoggedIn = auth.currentUser
 
-        if (!isLoggedIn) {
+        //if (!isLoggedIn) {
+        if (isLoggedIn == null) {
 
 
             callback = CallbackManager.Factory.create()
@@ -85,11 +94,14 @@ class FacebookLoginActivity : AppCompatActivity() {
             }
 
 
+        }else {
+            val intent = Intent(this@FacebookLoginActivity, MainActivity::class.java)
+            startActivity(intent)
         }
-        */
+
     }
 
-    /*
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //callbackManager.onActivityResult(requestCode, resultCode, data);
 
@@ -106,8 +118,39 @@ class FacebookLoginActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d("FACEBOOK", "signInWithCredential:success")
-                        val user = auth.currentUser
+                        //Log.d("FACEBOOK", "signInWithCredential:success")
+
+                        val fa = auth.currentUser!!
+
+                        FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {
+                                Log.e("","")
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+                                if(p0.value != null){
+                                    //waitDialog.dismiss()
+                                    val intent = Intent(this@FacebookLoginActivity, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }else {
+                                    val user = PeopleInfo()
+                                    user.apply {
+                                        this.key = fa.uid
+                                        this.name = fa.displayName.toString()
+                                        this.image = fa.photoUrl.toString()
+                                    }
+
+                                    FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").setValue(user).addOnSuccessListener {
+                                        //waitDialog.dismiss()
+                                        val intent = Intent(this@FacebookLoginActivity, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                }
+                            }
+                        })
+
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("FACEBOOK", "signInWithCredential:failure", task.exception)
@@ -117,7 +160,7 @@ class FacebookLoginActivity : AppCompatActivity() {
 
                 }
     }
-    */
+
 
 
 }
