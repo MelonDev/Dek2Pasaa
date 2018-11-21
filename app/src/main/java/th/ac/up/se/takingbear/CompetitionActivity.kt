@@ -26,6 +26,7 @@ import th.ac.up.se.takingbear.Tools.CardAnimation
 
 import th.ac.up.se.takingbear.Tools.FSTool
 import th.ac.up.se.takingbear.Tools.MelonFirebaseProcess
+import java.util.*
 
 class CompetitionActivity : AppCompatActivity() {
 
@@ -45,6 +46,8 @@ class CompetitionActivity : AppCompatActivity() {
     lateinit var sqlite: LangSQ
 
     lateinit var data: ArrayList<PeopleInfo>
+    lateinit var dataWait: ArrayList<PeopleInfo>
+
     private lateinit var task: MelonFirebaseProcess
 
     fun selector(p: PeopleInfo): Int {
@@ -111,6 +114,8 @@ class CompetitionActivity : AppCompatActivity() {
 */
 
         data = ArrayList()
+        dataWait = ArrayList()
+
 
         recyclerView = QuickRecyclerView(this
                 , com_recyclerview
@@ -158,44 +163,20 @@ class CompetitionActivity : AppCompatActivity() {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.value != null) {
 
-                    /*
-                    val profile = p0.getValue(PeopleInfo::class.java)!!
-
-                    if (sq.read().contentEquals(LangSQ.THAI)) {
-                        score_text.text = "คะแนนของฉัน: ${profile.score}"
-                    } else {
-                        score_text.text = "My score: ${profile.score}"
-                    }
-                    */
-
                     var score = 0
-
                     var count = 0
 
                     p0.children.forEach {
-
-                        val a = it.key.toString()
                         count += 1
+                        score += it.children.count()
 
-                        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(a).addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError) {
-                                Log.e("", "")
+                        if (count == p0.children.count()) {
+                            if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                                com_score_text.text = "คะแนนของฉัน: ${score}"
+                            } else {
+                                com_score_text.text = "My score: ${score}"
                             }
-
-                            override fun onDataChange(p1: DataSnapshot) {
-                                if (p1.value != null) {
-                                    score += p1.children.count()
-
-                                    if (count == p0.children.count()) {
-                                        if (sqlite.read().contentEquals(LangSQ.THAI)) {
-                                            com_score_text.text = "คะแนนของฉัน: ${score}"
-                                        } else {
-                                            com_score_text.text = "My score: ${score}"
-                                        }
-                                    }
-                                }
-                            }
-                        })
+                        }
 
                     }
 
@@ -228,7 +209,8 @@ class CompetitionActivity : AppCompatActivity() {
 
                             if (task.isInActive()) {
                                 task.activeNow()
-                                loadPeople(p0)
+                                //loadPeople(p0)
+                                newLoadPeople(p0)
                             } else {
                                 task.overActive(p0)
                             }
@@ -236,175 +218,100 @@ class CompetitionActivity : AppCompatActivity() {
                             stopProgress()
                             data.clear()
                             adapter.notifyDataSetChanged()
+
                         }
                     }
                 })
     }
 
-    fun loadPeople(dataSnapshot: DataSnapshot) {
-
-
+    fun newLoadPeople(dataSnapshot: DataSnapshot) {
         data.clear()
+        dataWait.clear()
 
-        var coun = 0
+        if (dataSnapshot.children.count() > 0) {
+            var count = 0
+            dataSnapshot.children.forEach { p0 ->
+                count += 1
+                val profile = p0.child("Info").getValue(PeopleInfo::class.java)!!
+                val a = p0.child("History")
+                if (a.children.count() > 0) {
+                    var score = 0
+                    var b = 0
+                    a.children.forEach { p1 ->
+                        b += 1
+                        score += p1.children.count()
+                        if (b == a.children.count()) {
+                            profile.score = score
+                            data.add(profile)
 
-        var scoreArr = ArrayList<Int>()
 
-        dataSnapshot.children.forEach {
-
-            coun+=1
-
-            val key = it.key.toString()
-            FirebaseDatabase.getInstance().reference
-                    .child("Peoples")
-                    .child(key)
-                    .child("Info")
-                    .addValueEventListener(object : ValueEventListener {
-                        override fun onCancelled(p3: DatabaseError) {
-                            Log.e("", "")
                         }
-
-                        override fun onDataChange(p3: DataSnapshot) {
-                            if (p3.value != null) {
-
-                                val profile = p3.getValue(PeopleInfo::class.java)!!
-
-
-                                //count += 1
+                    }
+                } else {
+                    profile.score = 0
+                    data.add(profile)
 
 
-                                FirebaseDatabase.getInstance().reference.child("Peoples").child(profile.key).child("History").addValueEventListener(object : ValueEventListener {
+                }
 
-                                    override fun onCancelled(p0: DatabaseError) {
-                                        Log.e("", "")
-                                    }
+                val p = task.loadOverActive()
+                if (count == dataSnapshot.children.count()) {
+                    if (p != null) {
+                        //Log.e("TEST","TEST")
+                        newLoadPeople(p)
+                    } else {
+                        notifyAdapter()
+                        stopProgress()
+                    }
+                }
+            }
 
-                                    override fun onDataChange(p0: DataSnapshot) {
-                                        if (p0.value != null) {
-
-                                            /*
-                                            val profile = p0.getValue(PeopleInfo::class.java)!!
-
-                                            if (sq.read().contentEquals(LangSQ.THAI)) {
-                                                score_text.text = "คะแนนของฉัน: ${profile.score}"
-                                            } else {
-                                                score_text.text = "My score: ${profile.score}"
-                                            }
-                                            */
-
-                                            var score = 0
-
-                                            var count = 0
-
-                                            p0.children.forEach {
-
-                                                val a = it.key.toString()
-                                                count += 1
-
-                                                //Log.e("P ${profile.key}",count.toString())
-
-                                                FirebaseDatabase.getInstance().reference.child("Peoples").child(profile.key).child("History").child(a).addListenerForSingleValueEvent(object : ValueEventListener {
-                                                    override fun onCancelled(p0: DatabaseError) {
-                                                        Log.e("", "")
-                                                    }
-
-                                                    override fun onDataChange(p1: DataSnapshot) {
-                                                        if (p1.value != null) {
-                                                            score += p1.children.count()
-
-                                                            //Log.e("CO $coun","Count: ${count} Score:${score.toString()}")
-                                                            //Log.e("L ${profile.key}",count.toString())
-
-
-                                                            if (count == p0.children.count()) {
-
-                                                                //Log.e("F ${profile.key}",count.toString())
-
-                                                                var arr = ArrayList<String>()
-                                                                data.forEach {
-                                                                    arr.add(it.key)
-                                                                }
-
-                                                                val bool: Boolean = profile.key in arr
-
-                                                                if(!bool){
-                                                                    if(data.size < 10) {
-
-                                                                        profile.score = score
-                                                                        data.add(profile)
-
-                                                                        //data.sortBy { selector(it) }
-                                                                        data.sortByDescending { selector(it) }
-
-                                                                        data.forEach {
-                                                                            Log.e(it.name,it.score.toString())
-                                                                        }
-
-                                                                        adapter.notifyDataSetChanged()
-                                                                    }
-                                                                }
-
-
-                                                                val p = task.loadOverActive()
-
-                                                                if(coun == dataSnapshot.children.count()){
-                                                                    if (p != null) {
-                                                                        //Log.e("TEST","TEST")
-                                                                        loadPeople(it!!)
-                                                                    } else {
-                                                                        stopProgress()
-                                                                    }
-                                                                }
-
-
-
-                                                            }
-                                                        }
-                                                    }
-                                                })
-
-                                            }
-
-                                        } else {
-
-                                            if(data.size < 10){
-                                                data.add(profile)
-
-                                                data.sortByDescending { selector(it) }
-                                                adapter.notifyDataSetChanged()
-
-                                                val p = task.loadOverActive()
-
-                                                if(coun == dataSnapshot.children.count()){
-                                                    if (p != null) {
-                                                        //Log.e("TEST","TEST")
-                                                        loadPeople(it!!)
-                                                    } else {
-                                                        stopProgress()
-                                                    }
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-                                })
-
-
-                            }
-                        }
-                    })
-
-            //Log.e("C",data.size.toString())
+        } else {
+            stopProgress()
+            notifyAdapter()
 
         }
 
-
     }
+
 
     override fun onStart() {
         super.onStart()
         FSTool(window).loadFunction()
+
+    }
+
+    fun addWait(profile: PeopleInfo) {
+
+        dataWait.add(profile)
+
+
+    }
+
+    fun notifyAdapter() {
+
+        data.sortWith(compareByDescending { it.score })
+        // dataWait.sortBy { it.score }
+
+        //val arr = ArrayList<PeopleInfo>()
+        //Log.e("TEST","TEST")
+
+        adapter.notifyDataSetChanged()
+
+
+/*
+        while (dataWait.size > 0 && data.size < 10) {
+            val a = dataWait[dataWait.size - 1]
+            dataWait.removeAt(dataWait.size - 1)
+
+            data.add(a)
+
+            if (dataWait.size == 0 || data.size == 10) {
+                adapter.notifyDataSetChanged()
+            }
+        }
+        */
+
 
     }
 

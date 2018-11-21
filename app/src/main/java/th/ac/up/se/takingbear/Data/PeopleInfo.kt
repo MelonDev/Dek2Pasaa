@@ -6,6 +6,6 @@ class PeopleInfo {
     var key = ""
 
     var image = ""
-    var score = 0
+    var score: Int = 0
 
 }

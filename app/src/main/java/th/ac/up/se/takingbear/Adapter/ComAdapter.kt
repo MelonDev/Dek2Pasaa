@@ -68,20 +68,19 @@ class ComAdapter(val fragment: CompetitionActivity, var colorDark: Int, var colo
         holder.nameA.text = data[position].name
         holder.nameB.text = data[position].name
 
-if(position == 0){
-    holder.top.visibility = View.VISIBLE
-}else {
+        if (position == 0) {
+            holder.top.visibility = View.VISIBLE
+        } else {
 
-    if(data[position].key == data[0].key){
-        holder.top.visibility = View.VISIBLE
+            if(slot.score == data[0].score){
+                holder.top.visibility = View.VISIBLE
+            } else {
+                holder.top.visibility = View.GONE
 
-    }else {
-        holder.top.visibility = View.GONE
-
-    }
+            }
 
 
-}
+        }
 
         if (data[position].image.isNotEmpty()) {
             //Picasso.get().load(data[position].image).into(holder.image)
@@ -104,71 +103,15 @@ if(position == 0){
         //holder.nameA.textSize = dpsToPixels(30).toFloat()
         //holder.nameB.textSize = dpsToPixels(30).toFloat()
 
-        val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
 
-        FirebaseDatabase.getInstance().reference.child("Peoples").child(slot.key).child("History").addValueEventListener(object : ValueEventListener {
-
-            override fun onCancelled(p0: DatabaseError) {
-                Log.e("", "")
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                if (p0.value != null) {
-
-                    /*
-                    val profile = p0.getValue(PeopleInfo::class.java)!!
-
-                    if (sq.read().contentEquals(LangSQ.THAI)) {
-                        score_text.text = "คะแนนของฉัน: ${profile.score}"
-                    } else {
-                        score_text.text = "My score: ${profile.score}"
-                    }
-                    */
-
-                    var score = 0
-
-                    var count = 0
-
-                    p0.children.forEach {
-
-                        val a = it.key.toString()
-                        count += 1
-
-                        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(a).addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError) {
-                                Log.e("", "")
-                            }
-
-                            override fun onDataChange(p1: DataSnapshot) {
-                                if (p1.value != null) {
-                                    score += p1.children.count()
-
-                                    if (count == p0.children.count()) {
-                                        if (sq.read().contentEquals(LangSQ.THAI)) {
-                                            holder.score.text = "${score} คะแนน"
-                                        } else {
-                                            holder.score.text = "${score} Point"
-                                        }
-                                    }
-                                }
-                            }
-                        })
-
-                    }
-
-                } else {
-                    if (sq.read().contentEquals(LangSQ.THAI)) {
-                        holder.score.text = "0 คะแนน"
-                    } else {
-                        holder.score.text = "0 Point"
-                    }
-                }
-            }
-        })
+        if (sq.read().contentEquals(LangSQ.THAI)) {
+            holder.score.text = "${slot.score} คะแนน"
+        } else {
+            holder.score.text = "${slot.score} Point"
+        }
 
 
     }
-
 
 
     private fun dpsToPixels(dps: Int): Int {
