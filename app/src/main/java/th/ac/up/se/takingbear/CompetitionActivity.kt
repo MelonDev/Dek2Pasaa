@@ -335,6 +335,11 @@ class CompetitionActivity : AppCompatActivity() {
 
                                                                         //data.sortBy { selector(it) }
                                                                         data.sortByDescending { selector(it) }
+
+                                                                        data.forEach {
+                                                                            Log.e(it.name,it.score.toString())
+                                                                        }
+
                                                                         adapter.notifyDataSetChanged()
                                                                     }
                                                                 }
