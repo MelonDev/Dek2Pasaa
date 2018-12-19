@@ -76,8 +76,8 @@ class ChapterSQ(private var context: FragmentActivity, private var tableName: St
                 val y = cursor.getInt(cursor.getColumnIndex(database.PASSED))
                 val z = cursor.getInt(cursor.getColumnIndex(database.OPENED))
 
-                val slot = ChapterCheck(x, y, z)
-                data.add(slot)
+                //val slot = ChapterCheck(x, y, z)
+                //data.add(slot)
             } while (cursor.moveToNext())
         }
         return data

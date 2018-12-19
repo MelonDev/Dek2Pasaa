@@ -83,9 +83,12 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
                 } else if (it.opened) {
                     holder.open(position)
                     //Log.e("0","2")
-
                 } else {
-                    holder.close()
+                    if(it.failed){
+                        holder.open(position)
+                    }else {
+                        holder.close()
+                    }
                     //Log.e("0","3")
 
                 }
@@ -130,12 +133,22 @@ class NumberAdapter(var fragmentActivity: FragmentActivity, var data: ArrayList<
                                 //Log.e(position.toString(),"2")
 
                             } else {
-                                holder.close()
+                                if(it.failed){
+                                    holder.open(position)
+                                }else {
+                                    holder.close()
+                                }
                                 //Log.e(position.toString(),"3")
 
                             }
                         }else if(lastBool) {
-                            holder.open(position)
+                            val it = checkData[check.indexOf(data[position - 1].key)]
+
+                            if(!it.passed){
+                                holder.close()
+                            }else{
+                                holder.open(position)
+                            }
                             //Log.e(position.toString(),"4")
 
                         }else {

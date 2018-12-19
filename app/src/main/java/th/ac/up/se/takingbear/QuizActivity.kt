@@ -196,12 +196,74 @@ class QuizActivity : AppCompatActivity() {
 
 
     private fun failPopup() {
-        if (sq.read().contentEquals(LangSQ.THAI)) {
-            popup(0, "ยังไม่ถูกนะ", R.drawable.ic_question_mark, R.color.color_game_blue, "ลองอีกครั้ง")
-        } else {
-            popup(0, "Incorrect", R.drawable.ic_question_mark, R.color.color_game_blue, "Try again")
 
+       /* val save1 = CheckTest()
+        save1.apply {
+            this.passed = false
+            this.opened = true
+            this.failed = true
+            this.key = data[position].key
         }
+        */
+
+        val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+
+
+        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+                Log.e("","")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.value != null){
+
+                    Log.e("Load","0")
+
+                    val v = p0.getValue(CheckTest::class.java)!!
+
+                    if(!v.passed){
+                        v.failed = true
+                    }
+
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(v).addOnSuccessListener {
+                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                            popup(0, "ยังไม่ถูกนะ", R.drawable.ic_question_mark, R.color.color_game_blue, "ลองอีกครั้ง")
+                        } else {
+                            popup(0, "Incorrect", R.drawable.ic_question_mark, R.color.color_game_blue, "Try again")
+                        }
+
+                    }
+
+                }else {
+                    Log.e("Load","0")
+
+                    val save1 = CheckTest()
+                    save1.apply {
+                        this.passed = false
+                        this.opened = true
+                        this.failed = true
+                        this.key = data[position].key
+                    }
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(save1).addOnSuccessListener {
+                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                            popup(0, "ยังไม่ถูกนะ", R.drawable.ic_question_mark, R.color.color_game_blue, "ลองอีกครั้ง")
+                        } else {
+                            popup(0, "Incorrect", R.drawable.ic_question_mark, R.color.color_game_blue, "Try again")
+                        }
+
+                    }
+                }
+            }
+        })
+
+
+
+        //postValues.put("/${data[position]}", save1)
+
+
+
+
+
     }
 
     private fun passPopup() {
@@ -211,34 +273,57 @@ class QuizActivity : AppCompatActivity() {
 
         //val postValues = HashMap<String, Any>()
 
-        val save1 = CheckTest()
-        save1.apply {
-            this.passed = true
-            this.opened = true
-            this.key = data[position].key
-        }
-
         val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
 
-        /*postValues.put("/Peoples/$u/History/${data[position]}", save1)
 
-        val save2 = CheckTest()
-        save2.apply {
-            this.passed = false
-            this.opened = true
-            this.key = data[position + 1].key
-        }
-
-        postValues.put("/Peoples/$u/History/${data[position + 1]}", save2)
-*/
-        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(save1).addOnSuccessListener {
-            if (sq.read().contentEquals(LangSQ.THAI)) {
-                popup(1, "ถูกต้อง", R.drawable.ic_star, R.color.colorAmber, "ข้อต่อไป")
-            } else {
-                popup(1, "Correct", R.drawable.ic_star, R.color.colorAmber, "Next")
-
+        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+                Log.e("","")
             }
-        }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.value != null){
+
+
+                    val v = p0.getValue(CheckTest::class.java)!!
+
+                    v.apply {
+                        this.passed = true
+                        this.opened = true
+                        //this.failed = false
+                        this.key = data[position].key
+                    }
+
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(v).addOnSuccessListener {
+                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                            popup(1, "ถูกต้อง", R.drawable.ic_star, R.color.colorAmber, "ข้อต่อไป")
+                        } else {
+                            popup(1, "Correct", R.drawable.ic_star, R.color.colorAmber, "Next")
+
+                        }
+                    }
+
+                }else {
+
+                    val save1 = CheckTest()
+                    save1.apply {
+                        this.passed = true
+                        this.opened = true
+                        //this.failed = false
+                        this.key = data[position].key
+                    }
+
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(save1).addOnSuccessListener {
+                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                            popup(1, "ถูกต้อง", R.drawable.ic_star, R.color.colorAmber, "ข้อต่อไป")
+                        } else {
+                            popup(1, "Correct", R.drawable.ic_star, R.color.colorAmber, "Next")
+
+                        }
+                    }
+                }
+            }
+        })
 
 
     }
@@ -249,27 +334,66 @@ class QuizActivity : AppCompatActivity() {
 
         //val postValues = HashMap<String, Any>()
 
-        val save1 = CheckTest()
-        save1.apply {
-            this.passed = true
-            this.opened = true
-            this.key = data[position].key
-        }
 
         val u = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+
+
+        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+                Log.e("","")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.value != null){
+
+
+                    val v = p0.getValue(CheckTest::class.java)!!
+
+                    v.apply {
+                        this.passed = true
+                        this.opened = true
+                        this.key = data[position].key
+                    }
+
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(v).addOnSuccessListener {
+                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                            popup(2, "สำเร็จ", R.drawable.trophy, R.color.colorAmber, "รับทราบ")
+                        } else {
+                            popup(2, "Congratulations", R.drawable.trophy, R.color.colorAmber, "OK")
+
+                        }
+
+                    }
+
+                }else {
+
+                    val save1 = CheckTest()
+                    save1.apply {
+                        this.passed = true
+                        this.opened = true
+                        this.key = data[position].key
+                    }
+
+                    FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(save1).addOnSuccessListener {
+                        if (sq.read().contentEquals(LangSQ.THAI)) {
+                            popup(2, "สำเร็จ", R.drawable.trophy, R.color.colorAmber, "รับทราบ")
+                        } else {
+                            popup(2, "Congratulations", R.drawable.trophy, R.color.colorAmber, "OK")
+
+                        }
+
+                    }
+                }
+            }
+        })
+
+
+
 
         //postValues.put("/${data[position]}", save1)
 
 
-        FirebaseDatabase.getInstance().reference.child("Peoples").child(u).child("History").child(data[position].masterKey).child(data[position].key).setValue(save1).addOnSuccessListener {
-            if (sq.read().contentEquals(LangSQ.THAI)) {
-                popup(2, "สำเร็จ", R.drawable.trophy, R.color.colorAmber, "รับทราบ")
-            } else {
-                popup(2, "Congratulations", R.drawable.trophy, R.color.colorAmber, "OK")
 
-            }
-
-        }
 
 
 

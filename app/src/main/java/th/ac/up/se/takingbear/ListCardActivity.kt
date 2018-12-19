@@ -182,7 +182,15 @@ class ListCardActivity : AppCompatActivity() {
 
                             override fun onDataChange(p1: DataSnapshot) {
                                 if (p1.value != null) {
-                                    score += p1.children.count()
+
+                                    p1.children.forEach { sl ->
+                                        val check = sl.getValue(CheckTest::class.java)!!
+                                        if(!check.failed){
+                                            score += 1
+                                        }
+                                    }
+
+                                    //score += p1.children.count()
 
                                     if (count == p0.children.count()) {
                                         if (sq.read().contentEquals(LangSQ.THAI)) {
@@ -661,7 +669,7 @@ class ListCardActivity : AppCompatActivity() {
                                 //Log.e("DSAMM ${itP1.key} : ${p1.key}", "T ${slot.key}")
 
 
-                                val s = ChapterCheck(0, slot.passed, slot.passed)
+                                val s = ChapterCheck(0, slot.passed, slot.passed,slot.failed)
                                 s.key = slot.key
 
                                 dataCheck.add(s)

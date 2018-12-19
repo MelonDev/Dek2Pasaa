@@ -93,7 +93,7 @@ class GoogleSignInActivity : AppCompatActivity() {
             } catch (e: ApiException) {
                 //Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
 
-                Toast.makeText(this,"${e.statusCode}: ${e.message}",Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${e.statusCode}: ${e.message}", Toast.LENGTH_LONG).show()
 
                 FirebaseDatabase.getInstance().reference.child("Log").push().child("Message").setValue(e.toString())
 
@@ -113,18 +113,18 @@ class GoogleSignInActivity : AppCompatActivity() {
 
                         val fa = FirebaseAuth.getInstance().currentUser!!
 
-                        FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").addListenerForSingleValueEvent(object : ValueEventListener{
+                        FirebaseDatabase.getInstance().reference.child("Peoples").child(fa.uid).child("Info").addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onCancelled(p0: DatabaseError) {
-                                Log.e("","")
+                                Log.e("", "")
                             }
 
                             override fun onDataChange(p0: DataSnapshot) {
-                                if(p0.value != null){
+                                if (p0.value != null) {
                                     waitDialog.dismiss()
                                     val intent = Intent(this@GoogleSignInActivity, MainActivity::class.java)
                                     startActivity(intent)
                                     finish()
-                                }else {
+                                } else {
                                     val user = PeopleInfo()
                                     user.apply {
                                         this.key = fa.uid
@@ -141,9 +141,6 @@ class GoogleSignInActivity : AppCompatActivity() {
                                 }
                             }
                         })
-
-
-
 
 
                         //startProcess()

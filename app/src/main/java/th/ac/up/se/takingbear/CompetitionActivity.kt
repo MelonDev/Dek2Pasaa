@@ -22,6 +22,7 @@ import th.ac.up.agr.thai_mini_chicken.SQLite.LangSQ
 import th.ac.up.agr.thai_mini_chicken.Tools.DeviceUtills
 import th.ac.up.agr.thai_mini_chicken.Tools.QuickRecyclerView
 import th.ac.up.se.takingbear.Adapter.ComAdapter
+import th.ac.up.se.takingbear.Data.CheckTest
 import th.ac.up.se.takingbear.Tools.CardAnimation
 
 import th.ac.up.se.takingbear.Tools.FSTool
@@ -168,7 +169,15 @@ class CompetitionActivity : AppCompatActivity() {
 
                     p0.children.forEach {
                         count += 1
-                        score += it.children.count()
+
+                        it.children.forEach { sl ->
+                            val check = sl.getValue(CheckTest::class.java)!!
+                            if(!check.failed){
+                                score += 1
+                            }
+                        }
+
+                        //score += it.children.count()
 
                         if (count == p0.children.count()) {
                             if (sqlite.read().contentEquals(LangSQ.THAI)) {
@@ -239,7 +248,15 @@ class CompetitionActivity : AppCompatActivity() {
                     var b = 0
                     a.children.forEach { p1 ->
                         b += 1
-                        score += p1.children.count()
+
+                        p1.children.forEach { sl ->
+                            val check = sl.getValue(CheckTest::class.java)!!
+                            if(!check.failed){
+                                score += 1
+                            }
+                        }
+
+                        //score += p1.children.count()
                         if (b == a.children.count()) {
                             profile.score = score
                             data.add(profile)
