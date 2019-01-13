@@ -241,46 +241,51 @@ class CompetitionActivity : AppCompatActivity() {
             var count = 0
             dataSnapshot.children.forEach { p0 ->
                 count += 1
-                val profile = p0.child("Info").getValue(PeopleInfo::class.java)!!
-                val a = p0.child("History")
-                if (a.children.count() > 0) {
-                    var score = 0
-                    var b = 0
-                    a.children.forEach { p1 ->
-                        b += 1
+                try {
+                    val profile = p0.child("Info").getValue(PeopleInfo::class.java)!!
+                    val a = p0.child("History")
+                    if (a.children.count() > 0) {
+                        var score = 0
+                        var b = 0
+                        a.children.forEach { p1 ->
+                            b += 1
 
-                        p1.children.forEach { sl ->
-                            val check = sl.getValue(CheckTest::class.java)!!
-                            if(!check.failed){
-                                score += 1
+                            p1.children.forEach { sl ->
+                                val check = sl.getValue(CheckTest::class.java)!!
+                                if(!check.failed){
+                                    score += 1
+                                }
+                            }
+
+                            //score += p1.children.count()
+                            if (b == a.children.count()) {
+                                profile.score = score
+                                data.add(profile)
+
+
                             }
                         }
-
-                        //score += p1.children.count()
-                        if (b == a.children.count()) {
-                            profile.score = score
-                            data.add(profile)
+                    } else {
+                        profile.score = 0
+                        data.add(profile)
 
 
+                    }
+
+                    val p = task.loadOverActive()
+                    if (count == dataSnapshot.children.count()) {
+                        if (p != null) {
+                            //Log.e("TEST","TEST")
+                            newLoadPeople(p)
+                        } else {
+                            notifyAdapter()
+                            stopProgress()
                         }
                     }
-                } else {
-                    profile.score = 0
-                    data.add(profile)
-
-
+                }catch (e :Exception){
+                    Log.e("Error",e.localizedMessage)
                 }
 
-                val p = task.loadOverActive()
-                if (count == dataSnapshot.children.count()) {
-                    if (p != null) {
-                        //Log.e("TEST","TEST")
-                        newLoadPeople(p)
-                    } else {
-                        notifyAdapter()
-                        stopProgress()
-                    }
-                }
             }
 
         } else {

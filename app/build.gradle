@@ -10,8 +10,8 @@ android {
         applicationId "th.ac.up.se.takingbear"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 9
-        versionName "0.9"
+        versionCode 13
+        versionName "1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
