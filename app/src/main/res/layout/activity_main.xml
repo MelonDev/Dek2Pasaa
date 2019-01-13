@@ -62,7 +62,7 @@
                     android:textColor="@color/color_game_black_dark"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:text="Talking Bear"
+                    android:text="Dek2Pasaa"
                     android:fontFamily="@font/ts_np"
                     android:textSize="60dp"
                     />
@@ -71,7 +71,7 @@
                     android:textColor="#515151"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:text="Talking Bear"
+                    android:text="Dek2Pasaa"
                     android:fontFamily="@font/sukhumvit_set_bold"
                     android:textSize="35dp"
                     />
