@@ -10,7 +10,7 @@ android {
         applicationId "th.ac.up.se.takingbear"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 14
+        versionCode 15
         versionName "1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -60,14 +60,14 @@ dependencies {
 
 
 
-    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation 'com.google.firebase:firebase-database:16.0.5'
     implementation 'com.google.firebase:firebase-storage:16.0.5'
 
     implementation 'com.google.android:flexbox:1.0.0'
 
 
-    implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

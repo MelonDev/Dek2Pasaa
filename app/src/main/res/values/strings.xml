@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dek2Pasaa</string>
+    <string name="app_name">Talking Bear</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_list_card">ListCardActivity</string>
     <string name="title_activity_lesson">LessonActivity</string>
@@ -14,6 +14,8 @@
     <string name="title_activity_new_google_sign_in">NewGoogleSignIn</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="title_activity_about">AboutActivity</string>
+
+
 
 
 </resources>
