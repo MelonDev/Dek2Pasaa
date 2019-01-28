@@ -55,7 +55,7 @@ class GoogleSignInActivity : AppCompatActivity() {
 
 
         val option = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .build()
         //val client = GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi()
