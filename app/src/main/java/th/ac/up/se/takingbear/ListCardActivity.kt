@@ -373,7 +373,7 @@ class ListCardActivity : AppCompatActivity() {
                 override fun onDataChange(p2: DataSnapshot) {
                     if (p2.value != null) {
 */
-            firebase.child("Lessons").child(key!!).child("Tests").addListenerForSingleValueEvent(object : ValueEventListener {
+            firebase.child("Lessons").child(key!!).child("Tests").addValueEventListener(object : ValueEventListener {
 
 
                 override fun onCancelled(p0: DatabaseError) {
@@ -525,36 +525,40 @@ class ListCardActivity : AppCompatActivity() {
 
                         val info = p0.getValue(LessonInfo::class.java)!!
 
-                        if (sqlite.read().contentEquals(LangSQ.THAI)) {
-                            val chapter: Chapter = Chapter(info.nameThai, info.cover)
-                            chapter.info = info
-                            if (info.status.contentEquals("RELEASE")) {
-                                dataChapter.add(chapter)
+                        if(!info.delete){
+                            if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                                val chapter: Chapter = Chapter(info.nameThai, info.cover)
+                                chapter.info = info
+                                if (info.status.contentEquals("RELEASE")) {
+                                    dataChapter.add(chapter)
 
 
-                                dataChapter.sortBy { selector(it) }
-                                adapterChapter.notifyDataSetChanged()
+                                    dataChapter.sortBy { selector(it) }
+                                    adapterChapter.notifyDataSetChanged()
+                                }
+
+
+                                //Log.e("size2",dataChapter.size.toString())
+
+                            } else {
+                                val chapter: Chapter = Chapter(info.nameEng, info.cover)
+                                chapter.info = info
+
+                                if (info.status.contentEquals("RELEASE")) {
+
+                                    dataChapter.add(chapter)
+                                    dataChapter.sortBy { selector(it) }
+
+                                    adapterChapter.notifyDataSetChanged()
+                                }
+
+
+                                //Log.e("size3",dataChapter.size.toString())
+
                             }
-
-
-                            //Log.e("size2",dataChapter.size.toString())
-
-                        } else {
-                            val chapter: Chapter = Chapter(info.nameEng, info.cover)
-                            chapter.info = info
-
-                            if (info.status.contentEquals("RELEASE")) {
-
-                                dataChapter.add(chapter)
-                                dataChapter.sortBy { selector(it) }
-
-                                adapterChapter.notifyDataSetChanged()
-                            }
-
-
-                            //Log.e("size3",dataChapter.size.toString())
-
                         }
+
+
 
                         dataChapter.sortBy { selector(it) }
 
@@ -610,24 +614,27 @@ class ListCardActivity : AppCompatActivity() {
 
             val info = it.getValue(TestInfo::class.java)!!
 
-            if (sqlite.read().contentEquals(LangSQ.THAI)) {
-                //val chapter: Chapter = Chapter(info.nameThai, info.cover)
-                //chapter.info = info
-                dataNumber.add(info)
-                dataNumber.sortBy { selector(it) }
+            if(!info.delete){
+                if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                    //val chapter: Chapter = Chapter(info.nameThai, info.cover)
+                    //chapter.info = info
+                    dataNumber.add(info)
+                    dataNumber.sortBy { selector(it) }
 
-                adapterNumber.notifyDataSetChanged()
+                    adapterNumber.notifyDataSetChanged()
 
-                //Log.e("size2",dataChapter.size.toString())
+                    //Log.e("size2",dataChapter.size.toString())
 
-            } else {
-                dataNumber.add(info)
-                dataNumber.sortBy { selector(it) }
-                adapterNumber.notifyDataSetChanged()
+                } else {
+                    dataNumber.add(info)
+                    dataNumber.sortBy { selector(it) }
+                    adapterNumber.notifyDataSetChanged()
 
-                //Log.e("size3",dataChapter.size.toString())
+                    //Log.e("size3",dataChapter.size.toString())
 
+                }
             }
+
             dataNumber.sortBy { selector(it) }
 
             adapterNumber.notifyDataSetChanged()
@@ -742,27 +749,31 @@ class ListCardActivity : AppCompatActivity() {
             val info = it.getValue(WordInfo::class.java)!!
             //Log.e("IMG","S ${info.key}")
 
+            if(!info.delete){
+                if (sqlite.read().contentEquals(LangSQ.THAI)) {
+                    //val chapter: Chapter = Chapter(info.nameThai, info.cover)
+                    //chapter.info = info
 
-            if (sqlite.read().contentEquals(LangSQ.THAI)) {
-                //val chapter: Chapter = Chapter(info.nameThai, info.cover)
-                //chapter.info = info
-                dataLesson.add(info)
+                    dataLesson.add(info)
 
-                dataLesson.sortBy { selector(it) }
-                adapterWord.notifyDataSetChanged()
+                    dataLesson.sortBy { selector(it) }
+                    adapterWord.notifyDataSetChanged()
 
 
-                //Log.e("size2",dataChapter.size.toString())
+                    //Log.e("size2",dataChapter.size.toString())
 
-            } else {
-                dataLesson.add(info)
-                dataLesson.sortBy { selector(it) }
+                } else {
+                    dataLesson.add(info)
+                    dataLesson.sortBy { selector(it) }
 
-                adapterWord.notifyDataSetChanged()
+                    adapterWord.notifyDataSetChanged()
 
-                //Log.e("size3",dataChapter.size.toString())
+                    //Log.e("size3",dataChapter.size.toString())
 
+                }
             }
+
+
 
             dataLesson.sortBy { selector(it) }
             adapterWord.notifyDataSetChanged()

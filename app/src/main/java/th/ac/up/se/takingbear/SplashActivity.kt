@@ -17,6 +17,10 @@ import kotlinx.android.synthetic.main.activity_splash.*
 import th.ac.up.se.takingbear.Tools.FSTool
 import com.facebook.AccessToken
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mylhyl.circledialog.CircleDialog
 import com.mylhyl.circledialog.callback.ConfigButton
 import com.mylhyl.circledialog.callback.ConfigDialog
@@ -61,6 +65,7 @@ class SplashActivity : AppCompatActivity() {
 
         FSTool(this.window).loadFunction()
 
+
         handler = Handler()
 
         runnable = Runnable {
@@ -100,6 +105,8 @@ class SplashActivity : AppCompatActivity() {
         if(finish){
             finish()
         }
+
+
 
     }
 

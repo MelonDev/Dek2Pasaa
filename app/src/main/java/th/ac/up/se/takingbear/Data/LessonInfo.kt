@@ -15,4 +15,7 @@ class LessonInfo {
     var price :Double = 0.00
     var type = ""
 
+    var delete = false
+
+
 }

@@ -14,4 +14,7 @@ class TestInfo {
 
     var answer = 0
 
+    var delete = false
+
+
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
+    android:background="#fbf39f"
     tools:context=".SplashActivity">
 
     <RelativeLayout
@@ -27,7 +27,7 @@
                 android:layout_width="250dp"
                 android:layout_height="250dp"
                 android:adjustViewBounds="true"
-                android:src="@drawable/logo"
+                android:src="@drawable/dek_logo"
                 android:scaleType="centerCrop"
                 android:layout_marginRight="0dp"
                 />
@@ -51,8 +51,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/ts_som_np"
-                    android:text="Talking Bear"
-                    android:textColor="#3f2021"
+                    android:text="Dek2Pasaa"
+                    android:textColor="#8A512E"
                     android:textSize="60dp" />
 
             </RelativeLayout>

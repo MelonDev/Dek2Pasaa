@@ -13,5 +13,6 @@ class WordInfo {
 
     var number = 0
     var key = ""
+    var delete = false
 
 }

@@ -86,11 +86,11 @@ class MainActivity : AppCompatActivity() {
         if(lang.contentEquals(LangSQ.THAI)){
             main_lang_thai.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.thai_flag))
             main_lang_eng.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.eng_flag_dark))
-            main_title.text = "เด็กสองภาษา"
+            main_title.text = "เด็ก2ภาษา"
         }else {
             main_lang_thai.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.thai_flag_dark))
             main_lang_eng.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.eng_flag))
-            main_title.text = "Talking Bear"
+            main_title.text = "Dek2Pasaa"
         }
     }
 
