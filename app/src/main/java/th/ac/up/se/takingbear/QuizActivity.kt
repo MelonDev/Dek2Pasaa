@@ -97,8 +97,12 @@ class QuizActivity : AppCompatActivity() {
                     p0.children.forEach {
 
                         val test = it.getValue(TestInfo::class.java)!!
-                        data.add(test)
                         //cardToAny(test)
+
+                        if (!test.delete){
+                            test.number = data.size + 1
+                            data.add(test)
+                        }
 
                         count += 1
 

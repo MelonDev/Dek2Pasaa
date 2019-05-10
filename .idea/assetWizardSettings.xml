@@ -51,7 +51,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="60" />
+                                                <entry key="scalingPercent" value="51" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -62,9 +62,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="f8eb70" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/dekLogo2.png" />
-                                      <entry key="legacyIconShape" value="CIRCLE" />
+                                      <entry key="backgroundColor" value="faf3a9" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Documents/iconDek2Pasaa.png" />
                                       <entry key="webIconShape" value="CIRCLE" />
                                     </map>
                                   </option>

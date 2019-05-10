@@ -241,7 +241,12 @@ class LessonActivity : AppCompatActivity(){
 
                             p0.children.forEach {
                                 val card = it.getValue(WordInfo::class.java)!!
-                                dataWord.add(card)
+
+                                if (!card.delete){
+                                    card.number = dataWord.size + 1
+                                    dataWord.add(card)
+
+                                }
 
                                 count += 1
 
