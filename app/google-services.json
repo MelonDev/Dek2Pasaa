@@ -25,15 +25,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577475648781-49pb1eusvfnovg9nltpp05vr4hbl5tel.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "577475648781-82hs62ftf5unpfg81aoibt3fubimd9h0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "Dek2Pasaa"
+              }
+            }
+          ]
         }
       }
     },
@@ -46,19 +51,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "577475648781-coapo0612rjo40807kkt8pnkcqavdf6q.apps.googleusercontent.com",
+          "client_id": "577475648781-01clfnb4t5prgkvdf2818vtj5pqmh8tk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "th.ac.up.se.takingbear",
-            "certificate_hash": "99158f8d4493f1d2000e37403e177fac9f58232a"
+            "certificate_hash": "0aaf6882cde7bfd519534ae049dd205fb720b61c"
           }
         },
         {
-          "client_id": "577475648781-h9hho8j6kenq42blrasifu6usv34vpfu.apps.googleusercontent.com",
+          "client_id": "577475648781-pm5f9n6megkh43kjka6jjdouomnvl70j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "th.ac.up.se.takingbear",
-            "certificate_hash": "c13a0777258f5a1fdf6bfb4018b41ed2616724fc"
+            "certificate_hash": "04a77daf4539c2946c0cf6ddc6afa9fe8ab36511"
           }
         },
         {
@@ -70,11 +75,19 @@
           }
         },
         {
-          "client_id": "577475648781-pm5f9n6megkh43kjka6jjdouomnvl70j.apps.googleusercontent.com",
+          "client_id": "577475648781-h9hho8j6kenq42blrasifu6usv34vpfu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "th.ac.up.se.takingbear",
-            "certificate_hash": "04a77daf4539c2946c0cf6ddc6afa9fe8ab36511"
+            "certificate_hash": "c13a0777258f5a1fdf6bfb4018b41ed2616724fc"
+          }
+        },
+        {
+          "client_id": "577475648781-coapo0612rjo40807kkt8pnkcqavdf6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "th.ac.up.se.takingbear",
+            "certificate_hash": "99158f8d4493f1d2000e37403e177fac9f58232a"
           }
         },
         {
@@ -88,20 +101,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "577475648781-49pb1eusvfnovg9nltpp05vr4hbl5tel.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "577475648781-82hs62ftf5unpfg81aoibt3fubimd9h0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "Dek2Pasaa"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

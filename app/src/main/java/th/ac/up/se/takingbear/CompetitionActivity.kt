@@ -237,12 +237,24 @@ class CompetitionActivity : AppCompatActivity() {
         data.clear()
         dataWait.clear()
 
+        Log.e("0",dataSnapshot.children.count().toString())
+
+
         if (dataSnapshot.children.count() > 0) {
             var count = 0
+
+
             dataSnapshot.children.forEach { p0 ->
                 count += 1
                 try {
+
+                    Log.e("1",p0.key.toString())
+
+
                     val profile = p0.child("Info").getValue(PeopleInfo::class.java)!!
+
+                    Log.e("2",profile.key.toString())
+
                     val a = p0.child("History")
                     if (a.children.count() > 0) {
                         var score = 0
