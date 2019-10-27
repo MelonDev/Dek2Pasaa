@@ -15,4 +15,6 @@ class WordInfo {
     var key = ""
     var delete = false
 
+    var video = ""
+
 }

@@ -119,6 +119,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun setCounter(year: Int, month: Int, day: Int) {
 
+
         /*
         val reqString = (Build.MANUFACTURER
                 + " " + Build.MODEL + " " + Build.VERSION.RELEASE
@@ -126,7 +127,7 @@ class SplashActivity : AppCompatActivity() {
 
 
          */
-        val firebase = FirebaseDatabase.getInstance().reference.child("Counter").child(year.toString()).child(month.toString()).child(day.toString()).child("count")
+        val firebase = FirebaseDatabase.getInstance().reference.child("Counter").child((year).toString()).child((month+1).toString()).child(day.toString()).child("count")
 
         //val nowDate = "$year-$month-$day"
 
@@ -482,10 +483,10 @@ class SplashActivity : AppCompatActivity() {
 
         if (year > 2500) {
             val years = year - 543
-            setCounter(years + 1, month, day)
+            setCounter(years, month, day)
 
         } else {
-            setCounter(year + 1, month, day)
+            setCounter(year, month, day)
 
         }
 

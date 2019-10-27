@@ -362,6 +362,29 @@ class LessonActivity : AppCompatActivity(){
             lesson_indicator_A.visibility = View.VISIBLE
         }
 
+        if (card.video.isEmpty()){
+            lesson_video_play.visibility = View.GONE
+            lesson_video_play_text.visibility = View.GONE
+            lesson_video_text.visibility = View.GONE
+            `lesson_indicator_ฺCS`.visibility = View.GONE
+
+        }else {
+            lesson_video_play.visibility = View.VISIBLE
+            lesson_video_play_text.visibility = View.VISIBLE
+            lesson_video_text.visibility = View.VISIBLE
+
+            `lesson_indicator_ฺCS`.visibility = View.VISIBLE
+
+
+            lesson_video_play.setOnClickListener {
+
+                val intent = Intent(this, VideoActivity::class.java)
+                intent.putExtra("URL",card.video)
+                startActivity(intent)
+
+            }
+        }
+
 
 
         if (dataWord.size == 1) {
@@ -394,13 +417,21 @@ class LessonActivity : AppCompatActivity(){
             lesson_backward_text.text = "ก่อนหน้า"
             lesson_forward_text.text = "ถัดไป"
 
+            lesson_video_text.text = "วิดีโอ"
+            lesson_video_play_text.text = "เล่น"
+
             sA = spacialText("คำอ่าน: ", card.read)
             sB = spacialText("ภาษาไทย: ", card.nameThai)
             sC = spacialText("ภาษาอังกฤษ: ", card.nameEng)
+
+
         } else {
 
             lesson_backward_text.text = "Previous"
             lesson_forward_text.text = "Next"
+
+            lesson_video_text.text = "Video"
+            lesson_video_play_text.text = "Play"
 
             sA = spacialText("Pronunciation: ", card.read)
             sB = spacialText("Thai: ", card.nameThai)

@@ -297,6 +297,65 @@
 
                                 </RelativeLayout>
 
+
+
+
+                                <RelativeLayout
+                                    android:id="@+id/lesson_indicator_ฺCS"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#6effffff"
+                                    />
+
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp">
+
+                                    <TextView
+                                        android:id="@+id/lesson_video_text"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginRight="120dp"
+                                        android:fontFamily="@font/ts_som_np"
+                                        android:text="วิดีโอ"
+                                        android:textColor="@color/colorWhite"
+                                        android:textSize="46dp" />
+
+
+                                    <androidx.cardview.widget.CardView
+                                        android:layout_centerVertical="true"
+                                        android:layout_alignParentRight="true"
+                                        android:id="@+id/lesson_video_play"
+                                        android:layout_width="112dp"
+                                        android:layout_height="42dp"
+                                        app:cardBackgroundColor="@color/colorRedDark"
+                                        app:cardCornerRadius="21dp"
+
+                                        >
+
+                                        <TextView
+                                            android:id="@+id/lesson_video_play_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:fontFamily="@font/ts_som_np"
+                                            android:text="เล่น"
+                                            android:textColor="#FFFFFF"
+                                            android:textSize="36dp" />
+
+                                    </androidx.cardview.widget.CardView>
+
+
+
+
+                                </RelativeLayout>
+
+
+
                             </LinearLayout>
 
 
