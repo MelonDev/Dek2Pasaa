@@ -4,14 +4,17 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'io.fabric'
+
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "th.ac.up.se.takingbear"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 27
-        versionName "1.6"
+        versionCode 30
+        versionName "1.7.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -61,13 +64,16 @@ dependencies {
 
     implementation 'me.everything:overscroll-decor-android:1.0.4'
 
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
     //implementation 'com.google.android.play:core:1.6.3'
 
 
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-database:19.1.0'
-    implementation 'com.google.firebase:firebase-storage:19.0.1'
-    implementation 'com.google.firebase:firebase-auth:19.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
 
     implementation 'com.google.android:flexbox:1.0.0'

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import com.crashlytics.android.Crashlytics
 
 import kotlinx.android.synthetic.main.activity_splash.*
 import th.ac.up.se.takingbear.Tools.FSTool
@@ -76,7 +77,6 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         FSTool(this.window).loadFunction()
-
 
         handler = Handler()
 
